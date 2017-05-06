@@ -1,0 +1,23 @@
+{
+  "name": "mmorpg",
+  "version": "1.0.0",
+  "description": "Created using NodeJS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/propillow/MMORPG.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/propillow/MMORPG/issues"
+  },
+  "homepage": "https://github.com/propillow/MMORPG#readme",
+  "dependencies": {
+    "express": "^4.15.2",
+    "socket.io": "^1.7.3"
+  }
+}
