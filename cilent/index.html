@@ -22,6 +22,8 @@
 
 <img id = "char" src="/cilent/sprites/char.jpg" alt="char" style="width:30px;height:30px;">
 
+<button id = "kms-button">KMS</button>
+
 </div>
 
 
@@ -38,8 +40,14 @@
         var signDivSignIn = document.getElementById('signDiv-signIn');
         var signDivSignUp = document.getElementById('signDiv-signUp');
 
+        var kmsButton = document.getElementById('kms-button');
+
         signDivSignIn.onclick = function(){
                 socket.emit('signIn', {user: signDivUser.value, pass: signDivPass.value});
+        };
+
+        kmsButton.onclick = function(){
+                socket.emit('kms');
         };
 
         socket.on('signInResponse',function(data){

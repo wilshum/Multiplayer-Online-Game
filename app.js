@@ -10,7 +10,7 @@ app.get('/',function(req,res){
 
 app.use('/cilent', express.static(__dirname + '/cilent'));
 
-serv.listen(4321);
+serv.listen(process.env.PORT || 4321);
 
 console.log('Server Started');
 
@@ -72,10 +72,10 @@ io.sockets.on('connection', function(socket){
        console.log(socket.id + " has disconnected")
     });
 
+    socket.on('kms',function(){
+    	delete PlayerList[socket.id];
+    });
 
-    socket.on('test',function(data){
-        console.log('HELLO BECUZ ' + data.reason);
-    })
 
 });
 
