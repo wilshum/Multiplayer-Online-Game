@@ -17,12 +17,12 @@ console.log('Server Started');
 var SocketList = {};
 var PlayerList = {};
 
-var Player = function(id){
+var Player = function(id,name){
     var self = {
         x: 250,
         y: 250,
         id:id,
-        number: "" + Math.floor(10 * Math.random()),
+        username: name,
 
         rightPress:false,
         leftPress:false,
@@ -53,26 +53,23 @@ io.sockets.on('connection', function(socket){
     SocketList[socket.id] = socket;
     console.log(socket.id + " has connected");
 
-    var player = Player(socket.id);
-    PlayerList[socket.id] = player;
+    socket.on('signIn',function(data){
+
+
+        if(true) {
+            Player.onConnect(socket, data.user);
+            socket.emit('signInResponse', {success: true});
+        }
+        else
+            socket.emit('signInResponse',{success:false});
+    });
+
 
 
     socket.on('disconnect',function(){
        delete SocketList[socket.id];
        delete PlayerList[socket.id];
        console.log(socket.id + " has disconnected")
-    });
-
-    socket.on('keyPress',function(data){
-        if (data.inputId === 'right')
-            player.rightPress = data.state;
-        else if (data.inputId === 'left')
-            player.leftPress = data.state;
-        else if (data.inputId === 'up')
-            player.upPress = data.state;
-        else if (data.inputId === 'down')
-            player.downPress = data.state;
-
     });
 
 
@@ -91,7 +88,7 @@ setInterval(function(){
             pack.push({
                 x: player.x,
                 y: player.y,
-                number: player.number
+                username: player.username
             });
         }
 
@@ -99,4 +96,30 @@ setInterval(function(){
             var socket = SocketList[i];
             socket.emit('Move', pack);
         }
-}, 40);
+}, 10);
+
+Player.onConnect = function(socket, name){
+
+    var player = Player(socket.id, name);
+    PlayerList[socket.id] = player;
+
+    socket.on('keyPress',function(data){
+        if (data.inputId === 'right')
+            player.rightPress = data.state;
+        else if (data.inputId === 'left')
+            player.leftPress = data.state;
+        else if (data.inputId === 'up')
+            player.upPress = data.state;
+        else if (data.inputId === 'down')
+            player.downPress = data.state;
+
+    });
+
+    socket.on('sendMsgToServer',function(data){
+        var playerName = ("" + player.username);
+
+        for (var i in SocketList){
+            SocketList[i].emit('addToChat', playerName + ': ' + data);
+        }
+    });
+}

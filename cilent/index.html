@@ -1,27 +1,90 @@
 <html>
+<div id = "signDiv">
+    UserName: <input id = "signDiv-user" type = "text"><br>
+    Password: <input id = "signDiv-pass" type = "text">
+    <button id = "signDiv-signIn">Sign In</button>
+    <button id = "signDiv-signUp">Sign Up</button>
+</div>
+
+
+<div id = "gameDiv" style = "display: none;">
+
 <canvas id="myCanvas" width = "500" height = "500" style = "border:1px solid black;" ></canvas>
+
+<div id = "chat-text" style = "width: 500px; height : 100px; overflow-y:scroll">
+    <div> Welcome to KappaLand</div>
+</div>
+
+<form id = "chat-form">
+    <input id = "chat-input" type = "text" style = "width:500px">
+</form>
+
+
+<img id = "char" src="/cilent/sprites/char.jpg" alt="char" style="width:30px;height:30px;">
+
+</div>
+
 
 <head>
 <script src = https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js></script>
 
 
     <script>
+        var socket = io();
+
+        var signDiv = document.getElementById('signDiv');
+        var signDivUser = document.getElementById('signDiv-user');
+        var signDivPass = document.getElementById('signDiv-pass');
+        var signDivSignIn = document.getElementById('signDiv-signIn');
+        var signDivSignUp = document.getElementById('signDiv-signUp');
+
+        signDivSignIn.onclick = function(){
+                socket.emit('signIn', {user: signDivUser.value, pass: signDivPass.value});
+        };
+
+        socket.on('signInResponse',function(data){
+            if (data.success) {
+                signDiv.style.display = 'none';
+                gameDiv.style.display = 'inline-block';
+            }
+            else
+                alert("Sign in unsuccessful");
+
+        })
+
+
+
+
+        var chatText = document.getElementById('chat-text');
+        var chatForm = document.getElementById('chat-form');
+        var chatInput = document.getElementById('chat-input');
+
         var canvas = document.getElementById('myCanvas').getContext("2d");
         canvas.font = '25px Arial';
 
 
-        var socket = io();
 
-        var happy = function() {
-            socket.emit('test', {reason: 'im bored'});
+        socket.on('addToChat', function(data){
+            chatText.innerHTML += '<div>' + data + '</data>';
+        })
+
+        chatForm.onsubmit = function(event){
+            event.preventDefault();
+            socket.emit('sendMsgToServer',chatInput.value);
+
+            chatInput.value = '';
         }
 
 
         socket.on('Move',function(data){
             canvas.clearRect(0,0,500,500);
 
-            for (var player of data)
-            canvas.fillText(player.number,player.x,player.y);
+                for (var player of data){
+                canvas.fillText(player.username,player.x,player.y);
+
+                var img = document.getElementById("char");
+                canvas.drawImage(img,player.x,player.y);
+                }
             })
 
         document.onkeydown = function(event){
@@ -51,10 +114,8 @@
 </head>
 
 <body>
-NOTHING HERE
 
 
-<input type="submit" value="Submit" id = "Submit" onclick = "happy()">
 
 </body>
 </html>
