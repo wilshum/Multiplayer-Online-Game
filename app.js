@@ -46,6 +46,8 @@ var Player = function(id,name){
     return self;
 }
 
+
+
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
 

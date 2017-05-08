@@ -1,9 +1,15 @@
 <html>
+<link rel="stylesheet" href="/cilent/game.css">
+
+<div id = "background">
+
 <div id = "signDiv">
-    UserName: <input id = "signDiv-user" type = "text"><br>
-    Password: <input id = "signDiv-pass" type = "text">
-    <button id = "signDiv-signIn">Sign In</button>
-    <button id = "signDiv-signUp">Sign Up</button>
+    <title> Login </title>
+    <div id="loginTitle">Login</div>
+    UserName: <input id = "signDiv-user" type = "text"><br><br>
+    Password: <input id = "signDiv-pass" type = "text"><br><br>
+    <button class="button" id = "signDiv-signIn">Sign In</button>
+    <button class="button" id = "signDiv-signUp">Sign Up</button>
 </div>
 
 
@@ -11,13 +17,15 @@
 
 <canvas id="myCanvas" width = "500" height = "500" style = "border:1px solid black;" ></canvas>
 
+
 <div id = "chat-text" style = "width: 500px; height : 100px; overflow-y:scroll">
     <div> Welcome to KappaLand</div>
 </div>
 
-<form id = "chat-form">
-    <input id = "chat-input" type = "text" style = "width:500px">
-</form>
+    <form id = "chat-form">
+        <input id = "chat-input" type = "text" style = "width:500px">
+    </form>
+
 
 
 <img id = "char" src="/cilent/sprites/char.jpg" alt="char" style="width:30px;height:30px;">
@@ -121,9 +129,5 @@
     </script>
 </head>
 
-<body>
-
-
-
-</body>
+</div>
 </html>
