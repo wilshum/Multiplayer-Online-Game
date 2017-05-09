@@ -51,12 +51,22 @@
         var kmsButton = document.getElementById('kms-button');
 
         signDivSignIn.onclick = function(){
-                socket.emit('signIn', {user: signDivUser.value, pass: signDivPass.value});
+                socket.emit('signIn', {user: signDivUser.value.trim(), pass: signDivPass.value.trim()});
         };
 
-        kmsButton.onclick = function(){
-                socket.emit('kms');
+        signDivSignUp.onclick = function(){
+                socket.emit('signUp', {user: signDivUser.value.trim(), pass: signDivPass.value.trim()});
         };
+
+        socket.on('signUpResponse',function(data){
+            if (data.success) {
+                alert("Sign Up Successful! Log in with Your Username and Password!")
+            }
+            else
+                alert("Sign Up unsuccessful! Name already taken!");
+
+        })
+
 
         socket.on('signInResponse',function(data){
             if (data.success) {
@@ -68,6 +78,10 @@
 
         })
 
+
+        kmsButton.onclick = function(){
+                socket.emit('kms');
+        };
 
 
 

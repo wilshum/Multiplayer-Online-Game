@@ -16,13 +16,15 @@ console.log('Server Started');
 
 var SocketList = {};
 var PlayerList = {};
+var Credentials = [];
 
-var Player = function(id,name){
+var Player = function(id,name, adminPower){
     var self = {
         x: 250,
         y: 250,
         id:id,
         username: name,
+        admin:adminPower,
 
         rightPress:false,
         leftPress:false,
@@ -55,11 +57,26 @@ io.sockets.on('connection', function(socket){
     SocketList[socket.id] = socket;
     console.log(socket.id + " has connected");
 
+    socket.on('signUp',function(data){
+
+    	
+        if(true) {
+        	Credentials.push({
+        		user: data.user,
+        		pass: data.pass
+        	});
+        	//console.log(Credentials);
+            socket.emit('signUpResponse', {success: true});
+        }
+        else
+            socket.emit('signUpResponse',{success:false});
+    });
+
+
     socket.on('signIn',function(data){
 
-
-        if(true) {
-            Player.onConnect(socket, data.user);
+    	if(isCorrectCredential(data)) {
+            Player.onConnect(socket, data.user, false);
             socket.emit('signInResponse', {success: true});
         }
         else
@@ -74,9 +91,7 @@ io.sockets.on('connection', function(socket){
        console.log(socket.id + " has disconnected")
     });
 
-    socket.on('kms',function(){
-    	delete PlayerList[socket.id];
-    });
+
 
 
 });
@@ -100,9 +115,17 @@ setInterval(function(){
         }
 }, 10);
 
-Player.onConnect = function(socket, name){
+function isCorrectCredential(data){
+	for (var acc of Credentials)
+		if (acc.user === data.user && acc.pass === data.pass)
+			return true;
 
-    var player = Player(socket.id, name);
+		return false;
+}
+
+Player.onConnect = function(socket, name, adminPower){
+
+    var player = Player(socket.id, name, adminPower);
     PlayerList[socket.id] = player;
 
     socket.on('keyPress',function(data){
@@ -123,5 +146,9 @@ Player.onConnect = function(socket, name){
         for (var i in SocketList){
             SocketList[i].emit('addToChat', playerName + ': ' + data);
         }
+    });
+
+    socket.on('kms',function(){
+    	delete PlayerList[socket.id];
     });
 }
