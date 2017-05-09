@@ -13,7 +13,7 @@
 </div>
 
 
-<div id = "gameDiv" style = "display: none;">
+<div id = "gameDiv" style = "display: inline-block;">
 
 <canvas id="myCanvas" width = "500" height = "500" style = "border:1px solid black;" ></canvas>
 
@@ -27,8 +27,10 @@
     </form>
 
 
-
-<img id = "char" src="/cilent/sprites/char.jpg" alt="char" style="width:30px;height:30px;">
+<div id ="character-select">
+<img id = "char" src="/cilent/sprites/char.jpg" alt="char" style="width:60px; height:60px;"><br>
+Tyler1
+</div>
 
 <button id = "kms-button">KMS</button>
 
@@ -47,8 +49,16 @@
         var signDivPass = document.getElementById('signDiv-pass');
         var signDivSignIn = document.getElementById('signDiv-signIn');
         var signDivSignUp = document.getElementById('signDiv-signUp');
-
         var kmsButton = document.getElementById('kms-button');
+
+        var charImg = new Image();
+        charImg.src = '/cilent/sprites/char.png';
+        var frameIndex = 50;
+        var width = 50;
+        var height = 60;
+
+
+
 
         signDivSignIn.onclick = function(){
                 socket.emit('signIn', {user: signDivUser.value.trim(), pass: signDivPass.value.trim()});
@@ -90,7 +100,7 @@
         var chatInput = document.getElementById('chat-input');
 
         var canvas = document.getElementById('myCanvas').getContext("2d");
-        canvas.font = '25px Arial';
+        canvas.font = '15px Arial';
 
 
 
@@ -112,8 +122,7 @@
                 for (var player of data){
                 canvas.fillText(player.username,player.x,player.y);
 
-                var img = document.getElementById("char");
-                canvas.drawImage(img,player.x,player.y);
+                drawChar(player);
                 }
             })
 
@@ -138,6 +147,26 @@
             else if(event.keyCode === 87) //w
                 socket.emit('keyPress', {inputId:'up', state: false});
         }
+
+        function drawChar(player){
+        
+            console.log(player.lastPosition);
+            switch(player.lastPosition){
+                case 'down':
+                    canvas.drawImage(charImg,0,0,width,height,player.x,player.y,width,height);
+                    break;
+                case 'up':
+                    canvas.drawImage(charImg,frameIndex * 1,0,width,height,player.x,player.y,width,height);
+                    break;
+                case 'left':
+                    canvas.drawImage(charImg,frameIndex * 2,0,width,height,player.x,player.y,width,height);
+                    break;
+                case 'right':
+                    canvas.drawImage(charImg,frameIndex * 3,0,width,height,player.x,player.y,width,height);
+                    break;
+            }
+        }
+        
 
 
     </script>

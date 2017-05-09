@@ -30,6 +30,7 @@ var Player = function(id,name, adminPower){
         leftPress:false,
         upPress:false,
         downPress:false,
+        lastPosition:'down',
 
         Spd: 10
     }
@@ -105,7 +106,8 @@ setInterval(function(){
             pack.push({
                 x: player.x,
                 y: player.y,
-                username: player.username
+                username: player.username,
+                lastPosition:player.lastPosition
             });
         }
 
@@ -120,7 +122,7 @@ function isCorrectCredential(data){
 		if (acc.user === data.user && acc.pass === data.pass)
 			return true;
 
-		return false;
+		return true;  //false if running properly
 }
 
 Player.onConnect = function(socket, name, adminPower){
@@ -128,15 +130,18 @@ Player.onConnect = function(socket, name, adminPower){
     var player = Player(socket.id, name, adminPower);
     PlayerList[socket.id] = player;
 
+
     socket.on('keyPress',function(data){
         if (data.inputId === 'right')
-            player.rightPress = data.state;
+            player.rightPress = data.state; 
         else if (data.inputId === 'left')
             player.leftPress = data.state;
         else if (data.inputId === 'up')
             player.upPress = data.state;
         else if (data.inputId === 'down')
             player.downPress = data.state;
+
+        player.lastPosition = data.inputId;
 
     });
 
