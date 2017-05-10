@@ -49,3 +49,12 @@
 #chat-log{
 
 }
+
+.char-select-button{
+	background-color : white;
+	border: none;
+	text-align: center;
+	font-size: 12px;
+	font-weight: bold;
+
+}

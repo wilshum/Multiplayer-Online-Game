@@ -25,6 +25,7 @@ var Player = function(id,name, adminPower){
         id:id,
         username: name,
         admin:adminPower,
+        char: 'Tyler1',
 
         rightPress:false,
         leftPress:false,
@@ -107,15 +108,17 @@ setInterval(function(){
                 x: player.x,
                 y: player.y,
                 username: player.username,
-                lastPosition:player.lastPosition
+                lastPosition:player.lastPosition,
+                char:player.char
             });
         }
 
         for (var i in SocketList) {
             var socket = SocketList[i];
-            socket.emit('Move', pack);
+            socket.emit('playersInfo', pack);
+            socket.emit('Time');
         }
-}, 10);
+}, 25);
 
 function isCorrectCredential(data){
 	for (var acc of Credentials)
@@ -155,5 +158,9 @@ Player.onConnect = function(socket, name, adminPower){
 
     socket.on('kms',function(){
     	delete PlayerList[socket.id];
+    });
+
+    socket.on('charUpdate',function(data){
+    	player.char = data.charName;
     });
 }
