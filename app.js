@@ -25,7 +25,7 @@ var Player = function(id,name, adminPower){
         id:id,
         username: name,
         admin:adminPower,
-        char: 'Tyler1',
+        char: 'tyler1',
 
         rightPress:false,
         leftPress:false,
