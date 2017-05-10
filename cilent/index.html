@@ -1,4 +1,5 @@
 <html>
+<script src = https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js></script>
 <link rel="stylesheet" href="/cilent/game.css">
 
 <div id = "background">
@@ -16,8 +17,8 @@
 <div id = "gameDiv" style = "display: inline-block;">
 
 
-<div width = "100" height = "500">
-<canvas id="myCanvas" width = "500" height = "500" style = "border:1px solid black; float:left; background-color: #4caf55;" ></canvas>
+<div width = "1000" height = "500">
+<canvas id="myCanvas" width = "800" height = "500" style = "border:1px solid black; float:left; background-color: #4caf55;" ></canvas>
 
 <div id = "player-list-box" style = "width: 200px; height : 500px; float:left; overflow-y:scroll">
     <div style = "font-weight : bold;"> Player List</div><br>
@@ -43,7 +44,7 @@
 <img id = "Taeyeon" src="/cilent/sprites/Taeyeon-select.png" alt="char" style="width:60px; height:60px;"><br>Taeyeon
 </button>
 <button class = "char-select-button" onclick="UpdateCharModel('Orge')">
-<img id = "Taeyeon" src="/cilent/sprites/Orge-select.png" alt="char" style="width:60px; height:60px;"><br>
+<img id = "Orge" src="/cilent/sprites/Orge-select.png" alt="char" style="width:60px; height:60px;"><br>
 Orge
 </button>
 <br>
@@ -56,7 +57,6 @@ Orge
 
 
 <head>
-<script src = https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js></script>
 
 
     <script>
@@ -137,7 +137,7 @@ Orge
 
 
         socket.on('playersInfo',function(data){
-            canvas.clearRect(0,0,500,500);
+            canvas.clearRect(0,0,800,500);
 
                 playerListDisplay.innerHTML = '';
 
