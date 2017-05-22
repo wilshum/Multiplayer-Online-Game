@@ -18,6 +18,10 @@ var socket = io();
         var RPSDecline = document.getElementById('RPSDecline');
         var RPSGame = document.getElementById('RPSGame');
 
+        var RPSRock = document.getElementById('RPSRock');
+        var RPSPaper = document.getElementById('RPSPaper');
+        var RPSScissors = document.getElementById('RPSScissors');
+
 //Images
         var charImg = new Image();
         charImg.src = '/cilent/sprites/Tyler1.png';
@@ -45,7 +49,6 @@ var socket = io();
 
         })
 
-
         socket.on('signInResponse',function(data){
             if (data.success) {
                 signDiv.style.display = 'none';
@@ -56,12 +59,9 @@ var socket = io();
 
         })
 
-
         kmsButton.onclick = function(){
                 socket.emit('kms');
         };
-
-
 
         var chatText = document.getElementById('chat-text');
         var chatForm = document.getElementById('chat-form');
@@ -69,7 +69,6 @@ var socket = io();
 
         var canvas = document.getElementById('myCanvas').getContext("2d");
         canvas.font = '15px Arial';
-
 
 
         socket.on('addToChat', function(data){
@@ -126,10 +125,24 @@ var socket = io();
         })
 
         socket.on('RPSGame',function(){
-            console.log('accepted');
             RPSGame.style.display = 'inline-block';
-        })
+        });
 
+
+        RPSRock.onclick = function(){
+            socket.emit('RPSResult','Rock');
+            RPSGame.style.display = 'none';
+        };
+
+        RPSPaper.onclick = function(){
+            socket.emit('RPSResult','Paper');
+            RPSGame.style.display = 'none';
+        };
+
+        RPSScissors.onclick = function(){
+            socket.emit('RPSResult','Scissors');
+            RPSGame.style.display = 'none';
+        };
 
 //RPS Challenge
 

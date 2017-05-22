@@ -148,24 +148,58 @@ function onConnect(socket, name, adminPower){
 
 ///////////////////////RPS Challenge
         if(data.startsWith('rps')){
-            var code = data.split(" ");
+            var line = data.split(" ");
             var player1 = player;
             var player2;
             for (var i in PlayerList){
-                player2 = PlayerList[i];
-                if (player2.username === code[1]){
+                playerChallenged = PlayerList[i];
+                if (playerChallenged.username === line[1]){
+                	player2 = playerChallenged;
                     var socket = SocketList[player2.id];
-                    //console.log( player1.username + player2.username);
                     socket.emit('rpsChallenge', player1.username);
+
+                    socket.on('rpsAccept',function(){
+	        			for (var i in SocketList)
+	            			SocketList[i].emit('addToChat', 'RockPaperScissors between ' + player1.username + ' and ' + player2.username);
+
+	            		var socket1 = SocketList[player1.id];
+	            		var socket2 = SocketList[player2.id];
+
+	            		socket1.emit('RPSGame');
+	            		socket2.emit('RPSGame');
+
+
+	            		var op1 = function(){
+	            			var result;
+	            		socket1.on('RPSResult',function(data){
+	       					console.log(data);
+	       					result = data;
+	       				});
+	       					return result;
+	            		};
+
+	            		var op2 = function(){
+	            			var result;
+	       				socket2.on('RPSResult',function(data){
+	       					console.log(data);
+	       					result = data;
+	       				});
+	       					return result;
+	       				};
+
+
+	       				Promise.all([op1 ,op2]).then(function(data){
+	       						console.log(data[0]);
+	       						console.log(data[1]);
+	       				});
+
+
+	       			})
+
                 }
             }
-    }
+	}
 
-    socket.on('rpsAccept',function(){
-        for (var i in SocketList){
-            SocketList[i].emit('addToChat', 'RockPaperScissors between ' + player1.username + ' and ' + player2.username);
-        }
-        })
 ////////////////////////////
 
     });
