@@ -3,7 +3,6 @@ var app =  express();
 var serv = require('http').Server(app);
 
 
-
 app.get('/',function(req,res){
     res.sendFile(__dirname + '/cilent/index.html');
 });
@@ -81,9 +80,10 @@ io.sockets.on('connection', function(socket){
     });
 
     socket.on('disconnect',function(){
+       toAllChat(PlayerList[socket.id].username + " has disconnected");
        delete SocketList[socket.id];
        delete PlayerList[socket.id];
-       console.log(socket.id + " has disconnected")
+       console.log(socket.id + " has disconnected");
     });
 
 });
@@ -119,12 +119,40 @@ function isCorrectCredential(data){
 		return true;  //false if running properly
 }
 
+function RPSCalculate(player1Choice, player2Choice){ //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
+	if (player1Choice === player2Choice)
+		return 0;
+	else if (player1Choice === 'Rock'){
+		if (player2Choice === 'Scissors')
+			return 1;
+		else if (player2Choice === 'Paper')
+			return 2;
+	}
+	else if (player1Choice === 'Paper'){
+		if (player2Choice === 'Rock')
+			return 1
+		else if (player2Choice === 'Scissors')
+			return 2;
+	}
+	else if (player1Choice === 'Scissors'){
+		if (player2Choice === 'Paper')
+			return 1
+		else if (player2Choice === 'Rock')
+			return 2;
+	}
+}
+
+function toAllChat(line){
+for (var i in SocketList)
+	 SocketList[i].emit('addToChat', line);
+}
+
 function onConnect(socket, name, adminPower){
 
     var player = Player(socket.id, name, adminPower);
     PlayerList[socket.id] = player;
 
-    socket.on('keyPress',function(data){
+    socket.on('keyPress',function(data){            //glitchy character movement
         if (data.inputId === 'right')
             player.rightPress = data.state; 
         else if (data.inputId === 'left')
@@ -139,14 +167,13 @@ function onConnect(socket, name, adminPower){
 
     socket.on('sendMsgToServer',function(data){
         var playerName = ("" + player.username);
-        for (var i in SocketList)
-            SocketList[i].emit('addToChat', playerName + ': ' + data);
+         toAllChat(playerName + ': ' + data);
     });
 
     socket.on('sendCommandToServer',function(data){
         var playerName = ("" + player.username);
 
-///////////////////////RPS Challenge
+///////////////////////RPS Challenge   ->Challenger must go first ->fix error ->should refactor
         if(data.startsWith('rps')){
             var line = data.split(" ");
             var player1 = player;
@@ -159,8 +186,7 @@ function onConnect(socket, name, adminPower){
                     socket.emit('rpsChallenge', player1.username);
 
                     socket.on('rpsAccept',function(){
-	        			for (var i in SocketList)
-	            			SocketList[i].emit('addToChat', 'RockPaperScissors between ' + player1.username + ' and ' + player2.username);
+	        			toAllChat('RockPaperScissors between ' + player1.username + ' and ' + player2.username);
 
 	            		var socket1 = SocketList[player1.id];
 	            		var socket2 = SocketList[player2.id];
@@ -168,37 +194,42 @@ function onConnect(socket, name, adminPower){
 	            		socket1.emit('RPSGame');
 	            		socket2.emit('RPSGame');
 
-
-	            		var op1 = function(){
-	            			var result;
+	            		var player1Choice = '';
+	            		var player2Choice = '';
+	            	
 	            		socket1.on('RPSResult',function(data){
-	       					console.log(data);
-	       					result = data;
-	       				});
-	       					return result;
-	            		};
+	       					//console.log(data);
+	       					player1Choice = data;
 
-	            		var op2 = function(){
-	            			var result;
-	       				socket2.on('RPSResult',function(data){
-	       					console.log(data);
-	       					result = data;
-	       				});
-	       					return result;
-	       				};
+	       						socket2.on('RPSResult',function(data){
+	       						//console.log(data);
+	       						player2Choice = data;
 
+	       						var result = RPSCalculate(player1Choice,player2Choice);	
+	       						var line = "";
 
-	       				Promise.all([op1 ,op2]).then(function(data){
-	       						console.log(data[0]);
-	       						console.log(data[1]);
-	       				});
+	       						switch(result){
+	       							case 0: line = 'Draw';
+	       								break;
+	       							case 1: line = player1.username + ' beats ' + player2.username;
+	       								break;
+	       							case 2: line = player2.username + ' beats ' + player1.username;
+	       								break;
+	       							default: line = 'Something went wrong!'
+	       								break;
+	       						}
+	       						toAllChat(line);
+	       					});
+
+	            		});
+
 
 
 	       			})
 
                 }
             }
-	}
+		}
 
 ////////////////////////////
 
