@@ -60,32 +60,25 @@ io.sockets.on('connection', function(socket){
     console.log(socket.id + " has connected");
 
     socket.on('signUp',function(data){
-
-    	
         if(true) {
         	Credentials.push({
         		user: data.user,
         		pass: data.pass
         	});
-        	//console.log(Credentials);
             socket.emit('signUpResponse', {success: true});
         }
         else
             socket.emit('signUpResponse',{success:false});
     });
 
-
     socket.on('signIn',function(data){
-
     	if(isCorrectCredential(data)) {
-            Player.onConnect(socket, data.user, false);
+            onConnect(socket, data.user, false);
             socket.emit('signInResponse', {success: true});
         }
         else
             socket.emit('signInResponse',{success:false});
     });
-
-
 
     socket.on('disconnect',function(){
        delete SocketList[socket.id];
@@ -93,10 +86,8 @@ io.sockets.on('connection', function(socket){
        console.log(socket.id + " has disconnected")
     });
 
-
-
-
 });
+
 
 setInterval(function(){
     var pack = [];
@@ -120,19 +111,18 @@ setInterval(function(){
         }
 }, 25);
 
+
 function isCorrectCredential(data){
 	for (var acc of Credentials)
 		if (acc.user === data.user && acc.pass === data.pass)
 			return true;
-
 		return true;  //false if running properly
 }
 
-Player.onConnect = function(socket, name, adminPower){
+function onConnect(socket, name, adminPower){
 
     var player = Player(socket.id, name, adminPower);
     PlayerList[socket.id] = player;
-
 
     socket.on('keyPress',function(data){
         if (data.inputId === 'right')
@@ -145,16 +135,41 @@ Player.onConnect = function(socket, name, adminPower){
             player.downPress = data.state;
 
         player.lastPosition = data.inputId;
-
     });
 
     socket.on('sendMsgToServer',function(data){
         var playerName = ("" + player.username);
-
-        for (var i in SocketList){
+        for (var i in SocketList)
             SocketList[i].emit('addToChat', playerName + ': ' + data);
-        }
     });
+
+    socket.on('sendCommandToServer',function(data){
+        var playerName = ("" + player.username);
+
+///////////////////////RPS Challenge
+        if(data.startsWith('rps')){
+            var code = data.split(" ");
+            var player1 = player;
+            var player2;
+            for (var i in PlayerList){
+                player2 = PlayerList[i];
+                if (player2.username === code[1]){
+                    var socket = SocketList[player2.id];
+                    //console.log( player1.username + player2.username);
+                    socket.emit('rpsChallenge', player1.username);
+                }
+            }
+    }
+
+    socket.on('rpsAccept',function(){
+        for (var i in SocketList){
+            SocketList[i].emit('addToChat', 'RockPaperScissors between ' + player1.username + ' and ' + player2.username);
+        }
+        })
+////////////////////////////
+
+    });
+
 
     socket.on('kms',function(){
     	delete PlayerList[socket.id];
