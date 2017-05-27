@@ -6,6 +6,7 @@ var socket = io();
         var signDivSignIn = document.getElementById('signDiv-signIn');
         var signDivSignUp = document.getElementById('signDiv-signUp');
         var kmsButton = document.getElementById('kms-button');
+        var reviveButton = document.getElementById('revive-button')
         var timeStamp = document.getElementById('timeStamp');
         var playerListDisplay = document.getElementById('player-list');
 
@@ -40,6 +41,15 @@ var socket = io();
                 socket.emit('signUp', {user: signDivUser.value.trim(), pass: signDivPass.value.trim()});
         };
 
+        kmsButton.onclick = function(){
+                socket.emit('kms');
+        };
+
+        reviveButton.onclick = function(){
+                socket.emit('revive');
+        };
+
+
         socket.on('signUpResponse',function(data){
             if (data.success) {
                 alert("Sign Up Successful! Log in with Your Username and Password!")
@@ -47,7 +57,7 @@ var socket = io();
             else
                 alert("Sign Up unsuccessful! Name already taken!");
 
-        })
+        });
 
         socket.on('signInResponse',function(data){
             if (data.success) {
@@ -57,11 +67,8 @@ var socket = io();
             else
                 alert("Sign in unsuccessful");
 
-        })
+        });
 
-        kmsButton.onclick = function(){
-                socket.emit('kms');
-        };
 
         var chatText = document.getElementById('chat-text');
         var chatForm = document.getElementById('chat-form');
