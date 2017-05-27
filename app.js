@@ -240,6 +240,10 @@ function onConnect(socket, name, adminPower){
     	delete PlayerList[socket.id];
     });
 
+    socket.on('revive',function(){
+    	PlayerList[socket.id] = player;
+    });
+
     socket.on('charUpdate',function(data){
     	player.char = data.charName;
     });
