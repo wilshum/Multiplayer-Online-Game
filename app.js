@@ -1,7 +1,9 @@
 var express = require('express');
 var app = express();
-var serv = require('http').Server(app);
-var io = require('socket.io')(serv, {});
+var server = require('http').Server(app);
+var io = require('socket.io')(server, {});
+var mongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/";
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/cilent/index.html');
@@ -9,23 +11,33 @@ app.get('/', function (req, res) {
 
 app.use('/cilent', express.static(__dirname + '/cilent'));
 
-serv.listen(process.env.PORT || 8000);
-
+server.listen(process.env.PORT || 8000);
 console.log('Server Started!');
 
-var SocketList = {};
+var socketList = {};
 var playerList = {};
-var Credentials = [];
+var credentials = [];
+
+mongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    var dbo = db.db("mydb");
+    var query = {address: "Park Lane 38"};
+    dbo.collection("customers").find(query).toArray(function (err, result) {
+        if (err) throw err;
+        console.log(result);
+        //db.close();
+    });
+});
 
 io.sockets.on('connection', function (socket) {
 
     socket.id = Math.random();
-    SocketList[socket.id] = socket;
-    console.log(socket.id + " has connected");
+    socketList[socket.id] = socket;
+    console.log("Socket " + socket.id + " has connected");
 
     socket.on('signUp', function (data) {
         if (true) {
-            Credentials.push({
+            credentials.push({
                 user: data.user,
                 pass: data.pass
             });
@@ -46,10 +58,10 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         if (playerList.length != 0) {
-            toAllChat(playerList[socket.id].username + " has disconnected");
+            //toAllChat(playerList[socket.id].username + " has disconnected");
         }
         if (socket.id != null) {
-            delete SocketList[socket.id];
+            delete socketList[socket.id];
             delete playerList[socket.id];
             console.log(socket.id + " has disconnected");
         }
@@ -73,8 +85,8 @@ setInterval(function () {
         });
     }
 
-    for (var i in SocketList) {
-        var socket = SocketList[i];
+    for (var i in socketList) {
+        var socket = socketList[i];
         socket.emit('playersInfo', pack);
         socket.emit('Time');
     }
@@ -82,7 +94,7 @@ setInterval(function () {
 
 
 function isCorrectCredential(data) {
-    for (var acc of Credentials)
+    for (var acc of credentials)
         if (acc.user === data.user && acc.pass === data.pass)
             return true;
     return true;  //false if running properly
@@ -112,8 +124,8 @@ function RPSCalculate(player1Choice, player2Choice) { //return 1 ->Player 1 wins
 }
 
 function toAllChat(line) {
-    for (var i in SocketList)
-        SocketList[i].emit('addToChat', line);
+    for (var i in socketList)
+        socketList[i].emit('addToChat', line);
 }
 
 function onConnect(socket, name, adminPower) {
@@ -151,14 +163,14 @@ function onConnect(socket, name, adminPower) {
                 playerChallenged = playerList[i];
                 if (playerChallenged.username === line[1]) {
                     player2 = playerChallenged;
-                    var socket = SocketList[player2.id];
+                    var socket = socketList[player2.id];
                     socket.emit('rpsChallenge', player1.username);
 
                     socket.on('rpsAccept', function () {
                         toAllChat('RockPaperScissors between ' + player1.username + ' and ' + player2.username);
 
-                        var socket1 = SocketList[player1.id];
-                        var socket2 = SocketList[player2.id];
+                        var socket1 = socketList[player1.id];
+                        var socket2 = socketList[player2.id];
 
                         socket1.emit('RPSGame');
                         socket2.emit('RPSGame');
