@@ -1,5 +1,3 @@
-
-
 Simple MMORPG game created using Node.js
 
 Heroku App Link:
