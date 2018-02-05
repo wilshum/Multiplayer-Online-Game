@@ -3,8 +3,10 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {});
 var playerJS = require('./cilent/model/player');
-var mongoClient = require('mongodb').MongoClient;
+var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
+var Promise = require('promise');
+var dbo;
 
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/cilent/index.html');
@@ -18,17 +20,16 @@ console.log('Server Started!');
 var socketList = {};
 var playerList = {};
 var credentials = [];
-//
-// mongoClient.connect(url, function (err, db) {
-//     if (err) throw err;
-//     var dbo = db.db("mydb");
-//     var query = {address: "Park Lane 38"};
-//     dbo.collection("customers").find(query).toArray(function (err, result) {
-//         if (err) throw err;
-//         console.log(result);
-//         //db.close();
-//     });
-// });
+
+MongoClient.connect(url, function (err, db) {
+    if (err) throw err;
+    dbo = db.db("mmorpg");
+    dbo.createCollection("credentials", function (err, res) {
+        if (err) throw err;
+        console.log("Collection created!");
+        //db.close();
+    });
+});
 
 io.sockets.on('connection', function (socket) {
 
@@ -37,11 +38,8 @@ io.sockets.on('connection', function (socket) {
     console.log("Socket " + socket.id + " has connected");
 
     socket.on('signUp', function (data) {
-        if (true) {
-            credentials.push({
-                user: data.user,
-                pass: data.pass
-            });
+        if (validCredential(data)) {
+            insertCredential(data);
             socket.emit('signUpResponse', {success: true});
         }
         else
@@ -93,12 +91,43 @@ setInterval(function () {
     }
 }, 25);
 
+function validCredential(data) {
+    return true;
+}
+
+function insertCredential(data) {
+    var credential = {
+        user: data.user,
+        pass: data.pass
+    };
+    dbo.collection("credentials").insertOne(credential, function (err, res) {
+        if (err) throw err;
+        console.log("MongoDB Document Inserted: " + JSON.stringify(credential));
+    });
+    credentials.push(credential);
+}
 
 function isCorrectCredential(data) {
-    for (var acc of credentials)
-        if (acc.user === data.user && acc.pass === data.pass)
+    for (var credential of credentials) {
+        if (credential.user === data.user && credential.pass === data.pass)
             return true;
-    return true;  //false if running properly
+    }
+    return false;
+    // return new Promise(function (fulfill, reject) {
+    //     var query = {
+    //         user: data.user,
+    //         pass: data.pass
+    //     };
+    //     dbo.collection("credentials").find(query).toArray(function (err, result) {
+    //         if (err) throw err;
+    //         console.log("Credentials matching: " + JSON.stringify(result));
+    //         if (result.length != 0) {
+    //             console.log(result[0].name);
+    //             fulfill(true);
+    //         }
+    //         reject(false);
+    //     })
+    // });
 }
 
 function RPSCalculate(player1Choice, player2Choice) { //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
