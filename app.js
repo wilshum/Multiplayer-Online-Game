@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {});
+var playerJS = require('./cilent/model/player');
 var mongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 
@@ -17,17 +18,17 @@ console.log('Server Started!');
 var socketList = {};
 var playerList = {};
 var credentials = [];
-
-mongoClient.connect(url, function (err, db) {
-    if (err) throw err;
-    var dbo = db.db("mydb");
-    var query = {address: "Park Lane 38"};
-    dbo.collection("customers").find(query).toArray(function (err, result) {
-        if (err) throw err;
-        console.log(result);
-        //db.close();
-    });
-});
+//
+// mongoClient.connect(url, function (err, db) {
+//     if (err) throw err;
+//     var dbo = db.db("mydb");
+//     var query = {address: "Park Lane 38"};
+//     dbo.collection("customers").find(query).toArray(function (err, result) {
+//         if (err) throw err;
+//         console.log(result);
+//         //db.close();
+//     });
+// });
 
 io.sockets.on('connection', function (socket) {
 
@@ -130,7 +131,7 @@ function toAllChat(line) {
 
 function onConnect(socket, name, adminPower) {
 
-    var player = Player(socket.id, name, adminPower);
+    var player = playerJS.data(socket.id, name, adminPower);
     playerList[socket.id] = player;
 
     socket.on('keyPress', function (data) {            //glitchy character movement
@@ -218,7 +219,6 @@ function onConnect(socket, name, adminPower) {
 ////////////////////////////
 
     });
-
 
     socket.on('kms', function () {
         delete playerList[socket.id];

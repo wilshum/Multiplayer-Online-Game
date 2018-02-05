@@ -1,76 +1,80 @@
 <html>
-<script src = https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js></script>
 <link rel="stylesheet" type="text/css" href="/cilent/game.css">
 
-<div id = "background">
+<div id="background">
 
-    <div id = "signDiv">
+    <div id="signDiv">
         <title> Login </title>
         <div id="loginTitle">Login</div>
-        UserName: <input id = "signDiv-user" type = "text"><br><br>
-        Password: <input id = "signDiv-pass" type = "text"><br><br>
-        <button class="button" id = "signDiv-signIn">Sign In</button>
-        <button class="button" id = "signDiv-signUp">Sign Up</button>
+        UserName: <input id="signDiv-user" type="text"><br><br>
+        Password: <input id="signDiv-pass" type="text"><br><br>
+        <button class="button" id="signDiv-signIn">Sign In</button>
+        <button class="button" id="signDiv-signUp">Sign Up</button>
     </div>
 
-    <div id = "RPSChallenge" style = "display: none">
-        <label id = 'challengeMessage'></label>
+    <div id="RPSChallenge" style="display: none">
+        <label id='challengeMessage'></label>
         <input type="button" value="Accept" id="RPSAccept">
         <input type="button" value="Decline" id="RPSDecline">
         <br>
     </div>
 
-    <div id = "RPSGame" style = "display:none">
+    <div id="RPSGame" style="display:none">
         <input type="button" value="Paper" id="RPSPaper">
         <input type="button" value="Scissors" id="RPSScissors">
         <input type="button" value="Rock" id="RPSRock">
     </div>
 
 
-    <div id = "gameDiv" style = "display: inline-block;">
-            <div width = "1000" height = "500">
-                <canvas id="myCanvas" width = "800" height = "500" style = "border:1px solid black; float:left; background-color: #4caf55;" ></canvas>
+    <div id="gameDiv" style="display: inline-block;">
+        <div width="1000" height="500">
+            <canvas id="myCanvas" width="800" height="500"
+                    style="border:1px solid black; float:left; background-color: #4caf55;"></canvas>
 
-                <div id = "player-list-box" style = "width: 200px; height : 500px; float:left; overflow-y:scroll">
-                    <div style = "font-weight : bold;"> Player List</div><br>
-                    <div id = "player-list"></div>
-                </div>
+            <div id="player-list-box" style="width: 200px; height : 500px; float:left; overflow-y:scroll">
+                <div style="font-weight : bold;"> Player List</div>
                 <br>
+                <div id="player-list"></div>
             </div>
+            <br>
+        </div>
 
-        <div id = "chat-text" style = "width: 500px; height : 100px; overflow-y:scroll">
+        <div id="chat-text" style="width: 500px; height : 100px; overflow-y:scroll">
             <div> Welcome to KappaLand</div>
         </div>
 
-        <form id = "chat-form">
-            <input id = "chat-input" type = "text" style = "width:500px">
+        <form id="chat-form">
+            <input id="chat-input" type="text" style="width:500px">
         </form>
 
 
-        <div id ="character-select">
-            <button class = "char-select-button" onclick="UpdateCharModel('tyler1')">
-                <img id = "Tyler1" src="/cilent/sprites/tyler1-select.png" alt="char" style="width:60px; height:60px;"><br>Tyler1
+        <div id="character-select">
+            <button class="char-select-button" onclick="UpdateCharModel('tyler1')">
+                <img id="Tyler1" src="/cilent/sprites/tyler1-select.png" alt="char"
+                     style="width:60px; height:60px;"><br>Tyler1
             </button>
 
-            <button class = "char-select-button" onclick="UpdateCharModel('taeyeon')">
-                <img id = "Taeyeon" src="/cilent/sprites/taeyeon-select.png" alt="char" style="width:60px; height:60px;"><br>Taeyeon
+            <button class="char-select-button" onclick="UpdateCharModel('taeyeon')">
+                <img id="Taeyeon" src="/cilent/sprites/taeyeon-select.png" alt="char"
+                     style="width:60px; height:60px;"><br>Taeyeon
             </button>
 
-            <button class = "char-select-button" onclick="UpdateCharModel('orge')">
-                <img id = "Orge" src="/cilent/sprites/orge-select.png" alt="char" style="width:60px; height:60px;"><br>Orge
+            <button class="char-select-button" onclick="UpdateCharModel('orge')">
+                <img id="Orge" src="/cilent/sprites/orge-select.png" alt="char" style="width:60px; height:60px;"><br>Orge
             </button>
             <br>
         </div>
 
-        <button id = "kms-button">KMS</button>
-        <button id = "revive-button">REVIVE</button>
-        <div id = "timeStamp">Time: </div>
+        <button id="kms-button">KMS</button>
+        <button id="revive-button">REVIVE</button>
+        <div id="timeStamp">Time:</div>
     </div>
 
 </div>
 
 <head>
-   <script type="text/javascript" src="/cilent/scripts/script.js"></script>
+    <script type="text/javascript" src="/cilent/scripts/script.js"></script>
 </head>
 
 </html>
