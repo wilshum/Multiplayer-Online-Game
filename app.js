@@ -105,26 +105,24 @@ function insertCredential(data) {
 
 function isCorrectCredential(data) {
     //noinspection JSAnnotator
-    for (var credential of credentials) {
-        if (credential.user === data.user && credential.pass === data.pass)
+    // for (var credential of credentials) {
+    //     if (credential.user === data.user && credential.pass === data.pass)
+    //         return true;
+    // }
+    // return false;
+    var query = {
+        user: data.user,
+        pass: data.pass
+    };
+    dbo.collection("credentials").find(query).toArray(function (err, result) {
+        if (err) throw err;
+        console.log("Credentials matching: " + JSON.stringify(result));
+        if (result.length != 0) {
+            console.log(result[0].name);
             return true;
-    }
-    return false;
-    // return new Promise(function (fulfill, reject) {
-    //     var query = {
-    //         user: data.user,
-    //         pass: data.pass
-    //     };
-    //     dbo.collection("credentials").find(query).toArray(function (err, result) {
-    //         if (err) throw err;
-    //         console.log("Credentials matching: " + JSON.stringify(result));
-    //         if (result.length != 0) {
-    //             console.log(result[0].name);
-    //             fulfill(true);
-    //         }
-    //         reject(false);
-    //     })
-    // });
+        }
+        return false;
+    });
 }
 
 function toAllChat(line) {
@@ -157,7 +155,7 @@ function RPSCalculate(player1Choice, player2Choice) { //return 1 ->Player 1 wins
 
 function onConnect(socket, name, adminPower) {
 
-    var player = Player.data(socket.id, name, adminPower);
+    var player = Player(socket.id, name, adminPower);
     playerList[socket.id] = player;
 
     socket.on('keyPress', function (data) {            //glitchy character movement
