@@ -1,24 +1,18 @@
 module.exports = function (grunt) {
 
-    grunt.registerTask('default', function () {
-        console.log("DEFAULT");
-    });
+    grunt.registerTask('default', 'concat');
 
     // Project configuration.
     grunt.initConfig({
         concat: {
             options: {
-                separator: ';',
+                separator: '\n'
             },
-            // cilent: {
-            //     src: ['cilent/js/**/*.js'],
-            //     dest: 'build/cilentScript.js',
-            // },
             server: {
-                src: ['server/**/*.js','app.js'],
-                dest: 'completeApp.js',
+                src: ['server/**/*.js', 'app.js'],
+                dest: 'completeApp.js'
             }
-        },
+        }
     });
 
     grunt.loadNpmTasks('grunt-contrib-concat');

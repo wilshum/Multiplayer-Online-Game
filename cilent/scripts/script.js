@@ -95,7 +95,6 @@ socket.on('playersInfo', function (data) {
 
     playerListDisplay.innerHTML = '';
 
-
     //noinspection JSAnnotator
     for (var player of data) {
         canvas.fillText(player.username, player.x, player.y);
@@ -152,7 +151,7 @@ RPSScissors.onclick = function () {
 
 
 socket.on('Time', function () {
-    var date = Date().slice(4, 24);
+    var date = new Date().slice(4, 24);
     timeStamp.innerHTML = date;
 });
 
