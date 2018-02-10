@@ -93,8 +93,8 @@ function validNewCredential(data) {
 
 function insertCredential(data) {
     var credential = {
-        user: data.user,
-        pass: data.pass
+        username: data.user,
+        password: data.pass
     };
     dbo.collection("credentials").insertOne(credential, function (err, res) {
         if (err) throw err;
@@ -111,8 +111,8 @@ function isCorrectCredential(data) {
     // }
     // return false;
     var query = {
-        user: data.user,
-        pass: data.pass
+        username: data.user,
+        password: data.pass
     };
     dbo.collection("credentials").find(query).toArray(function (err, result) {
         if (err) throw err;
