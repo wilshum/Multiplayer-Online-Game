@@ -1,8 +1,6 @@
+module.exports = function (grunt) {
 
-
-module.exports = function(grunt) {
-
-    grunt.registerTask('default', function(){
+    grunt.registerTask('default', function () {
         console.log("DEFAULT");
     });
 
@@ -12,10 +10,14 @@ module.exports = function(grunt) {
             options: {
                 separator: ';',
             },
-            dist: {
-                src: ['app.js', 'js/*.js'],
-                dest: 'build/script.js',
+            cilent: {
+                src: ['cilent/js/**/*.js'],
+                dest: 'build/cilentScript.js',
             },
+            server: {
+                src: ['app.js','server/**/*.js'],
+                dest: 'build/serverScript.js',
+            }
         },
     });
 

@@ -5,3 +5,4 @@ const X_STARTING_POS = 100;
 const Y_STARTING_POS = 100;
 const PLAYER_SPEED = 10;
 const STARTING_DIR = 'down';
+

@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {});
-var playerJS = require('./cilent/model/player');
 var MongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
 var Promise = require('promise');
@@ -160,7 +159,7 @@ function toAllChat(line) {
 
 function onConnect(socket, name, adminPower) {
 
-    var player = playerJS.data(socket.id, name, adminPower);
+    var player = Player.data(socket.id, name, adminPower);
     playerList[socket.id] = player;
 
     socket.on('keyPress', function (data) {            //glitchy character movement

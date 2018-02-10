@@ -3,8 +3,8 @@
  */
 var Player = function (id, name, adminPower) {
     var player = {
-        x: 100,
-        y: 100,
+        x: X_STARTING_POS,
+        y: Y_STARTING_POS,
         id: id,
         username: name,
         admin: adminPower,
@@ -14,9 +14,9 @@ var Player = function (id, name, adminPower) {
         leftPress: false,
         upPress: false,
         downPress: false,
-        lastPosition: 'down',
+        lastPosition: STARTING_DIR,
 
-        speed: 10
+        speed: PLAYER_SPEED
     };
 
     player.updatePosition = function () {
@@ -33,4 +33,3 @@ var Player = function (id, name, adminPower) {
     return player;
 };
 
-exports.data = Player;

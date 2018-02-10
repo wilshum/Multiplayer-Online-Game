@@ -189,7 +189,7 @@ function drawChar(player) {
             canvas.drawImage(playersImg, 0, 0, imgWidth, imgHeight, player.x, player.y, imgWidth, imgHeight);
             break;
         case 'up':
-            canvas.drawImage(playersImg, imgFrameIndex * 1, 0, imgWidth, imgHeight, player.x, player.y, imgWidth, imgHeight);
+            canvas.drawImage(playersImg, imgFrameIndex, 0, imgWidth, imgHeight, player.x, player.y, imgWidth, imgHeight);
             break;
         case 'left':
             canvas.drawImage(playersImg, imgFrameIndex * 2, 0, imgWidth, imgHeight, player.x, player.y, imgWidth, imgHeight);
@@ -204,3 +204,4 @@ function UpdateCharModel(name) {
     charImg.src = '/cilent/sprites/' + name + '.png';
     socket.emit('charUpdate', {charName: name});
 }
+
