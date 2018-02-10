@@ -19,11 +19,15 @@
   "homepage": "https://github.com/propillow/MMORPG#readme",
   "dependencies": {
     "express": "^4.15.2",
+    "grunt": "^1.0.2",
     "mongodb": "^3.0.2",
     "promise": "^8.0.1",
     "socket.io": "^1.7.3"
   },
   "engines": {
     "node": "4.1.x"
+  },
+  "devDependencies": {
+    "grunt-contrib-concat": "^1.0.1"
   }
 }
