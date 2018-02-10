@@ -6,7 +6,7 @@ var signDivPass = document.getElementById('signDiv-pass');
 var signDivSignIn = document.getElementById('signDiv-signIn');
 var signDivSignUp = document.getElementById('signDiv-signUp');
 var kmsButton = document.getElementById('kms-button');
-var reviveButton = document.getElementById('revive-button')
+var reviveButton = document.getElementById('revive-button');
 var timeStamp = document.getElementById('timeStamp');
 var playerListDisplay = document.getElementById('player-list');
 
@@ -96,10 +96,10 @@ socket.on('playersInfo', function (data) {
     playerListDisplay.innerHTML = '';
 
 
+    //noinspection JSAnnotator
     for (var player of data) {
         canvas.fillText(player.username, player.x, player.y);
         playerListDisplay.innerHTML += '<div>' + player.username + '</div>';
-
 
         drawChar(player);
     }

@@ -2,9 +2,9 @@ var express = require('express');
 var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {});
-var MongoClient = require('mongodb').MongoClient;
+var mongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/";
-var Promise = require('promise');
+var promise = require('promise');
 var dbo;
 
 app.get('/', function (req, res) {
@@ -13,20 +13,19 @@ app.get('/', function (req, res) {
 
 app.use('/cilent', express.static(__dirname + '/cilent'));
 
-server.listen(process.env.PORT || 8000);
-console.log('Server Started!');
+server.listen(process.env.PORT || SERVER_PORT);
+console.log('Server Started! localhost: ' + SERVER_PORT);
 
 var socketList = {};
 var playerList = {};
 var credentials = [];
 
-MongoClient.connect(url, function (err, db) {
+mongoClient.connect(url, function (err, db) {
     if (err) throw err;
     dbo = db.db("mmorpg");
     dbo.createCollection("credentials", function (err, res) {
         if (err) throw err;
         console.log("Collection created!");
-        //db.close();
     });
 });
 
@@ -37,7 +36,7 @@ io.sockets.on('connection', function (socket) {
     console.log("Socket " + socket.id + " has connected");
 
     socket.on('signUp', function (data) {
-        if (validCredential(data)) {
+        if (validNewCredential(data)) {
             insertCredential(data);
             socket.emit('signUpResponse', {success: true});
         }
@@ -64,9 +63,7 @@ io.sockets.on('connection', function (socket) {
             console.log(socket.id + " has disconnected");
         }
     });
-
 });
-
 
 setInterval(function () {
     var pack = [];
@@ -88,9 +85,9 @@ setInterval(function () {
         socket.emit('playersInfo', pack);
         socket.emit('Time');
     }
-}, 25);
+}, REFRESH_RATE);
 
-function validCredential(data) {
+function validNewCredential(data) {
     return true;
 }
 
@@ -107,6 +104,7 @@ function insertCredential(data) {
 }
 
 function isCorrectCredential(data) {
+    //noinspection JSAnnotator
     for (var credential of credentials) {
         if (credential.user === data.user && credential.pass === data.pass)
             return true;
@@ -127,6 +125,11 @@ function isCorrectCredential(data) {
     //         reject(false);
     //     })
     // });
+}
+
+function toAllChat(line) {
+    for (var i in socketList)
+        socketList[i].emit('addToChat', line);
 }
 
 function RPSCalculate(player1Choice, player2Choice) { //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
@@ -150,11 +153,6 @@ function RPSCalculate(player1Choice, player2Choice) { //return 1 ->Player 1 wins
         else if (player2Choice === 'Rock')
             return 2;
     }
-}
-
-function toAllChat(line) {
-    for (var i in socketList)
-        socketList[i].emit('addToChat', line);
 }
 
 function onConnect(socket, name, adminPower) {
@@ -245,7 +243,6 @@ function onConnect(socket, name, adminPower) {
         }
 
 ////////////////////////////
-
     });
 
     socket.on('kms', function () {

@@ -15,7 +15,7 @@ module.exports = function (grunt) {
             //     dest: 'build/cilentScript.js',
             // },
             server: {
-                src: ['app.js','server/**/*.js'],
+                src: ['server/**/*.js','app.js'],
                 dest: 'completeApp.js',
             }
         },
