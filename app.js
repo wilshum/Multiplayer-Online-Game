@@ -18,7 +18,6 @@ console.log('Server Started! localhost: ' + SERVER_PORT);
 
 var socketList = {};
 var playerList = {};
-var credentials = [];
 
 mongoClient.connect(url, function (err, db) {
     if (err) throw err;
@@ -35,22 +34,20 @@ io.sockets.on('connection', function (socket) {
     socketList[socket.id] = socket;
     console.log("Socket " + socket.id + " has connected");
 
-    socket.on('signUp', function (data) {
-        if (validNewCredential(data)) {
-            insertCredential(data);
-            socket.emit('signUpResponse', {success: true});
-        }
-        else
-            socket.emit('signUpResponse', {success: false});
+    socket.on('signUp', function (userData) {
+        isValidNewCredential(userData).then(function (res) {
+            if (res)
+                insertCredential(userData);
+            socket.emit('signUpResponse', {success: res});
+        })
     });
 
-    socket.on('signIn', function (data) {
-        if (isCorrectCredential(data)) {
-            onConnect(socket, data.user, false);
-            socket.emit('signInResponse', {success: true});
-        }
-        else
-            socket.emit('signInResponse', {success: false});
+    socket.on('signIn', function (userData) {
+        isCorrectCredential(userData).then(function (res) {
+            if (res)
+                onConnect(socket, userData.user, false);
+            socket.emit('signInResponse', {success: res});
+        })
     });
 
     socket.on('disconnect', function () {
@@ -87,8 +84,40 @@ setInterval(function () {
     }
 }, REFRESH_RATE);
 
-function validNewCredential(data) {
-    return true;
+
+function isValidNewCredential(userData) {
+    return new Promise(function (callback) {
+        var query = {
+            username: userData.user,
+        };
+        dbo.collection("credentials").find(query).toArray(function (err, result) {
+            if (err) throw err;
+            if (result.length == 0) {
+                console.log("user credential not taken yet: " + userData);
+                callback(true);
+            }
+            callback(false);
+            console.log("User credential already exist: " + JSON.stringify(result));
+        });
+    });
+}
+
+function isCorrectCredential(userData) {
+    return new Promise(function (callback) {
+        var query = {
+            username: userData.user,
+            password: userData.pass
+        };
+        dbo.collection("credentials").find(query).toArray(function (err, result) {
+            if (err) throw err;
+            console.log("Credentials matching: " + JSON.stringify(result));
+            if (result.length != 0) {
+                console.log("Matching Credential: " + result[0]);
+                callback(true);
+            }
+            callback(false);
+        });
+    });
 }
 
 function insertCredential(data) {
@@ -99,29 +128,6 @@ function insertCredential(data) {
     dbo.collection("credentials").insertOne(credential, function (err, res) {
         if (err) throw err;
         console.log("MongoDB Document Inserted: " + JSON.stringify(credential));
-    });
-    credentials.push(credential);
-}
-
-function isCorrectCredential(data) {
-    //noinspection JSAnnotator
-    // for (var credential of credentials) {
-    //     if (credential.user === data.user && credential.pass === data.pass)
-    //         return true;
-    // }
-    // return false;
-    var query = {
-        username: data.user,
-        password: data.pass
-    };
-    dbo.collection("credentials").find(query).toArray(function (err, result) {
-        if (err) throw err;
-        console.log("Credentials matching: " + JSON.stringify(result));
-        if (result.length != 0) {
-            console.log(result[0].name);
-            return true;
-        }
-        return false;
     });
 }
 
