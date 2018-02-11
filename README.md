@@ -12,5 +12,7 @@ then node completeApp.js
 Running MongoDB:
 mongo folder -> mongod.exe
 
+send command /rps {username} to challenge them to Rock, Paper Scissors
+
 Deployed App -> Heroku App Link:
 https://polar-stream-42040.herokuapp.com/
