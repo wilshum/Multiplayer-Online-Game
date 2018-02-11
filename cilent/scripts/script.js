@@ -151,7 +151,7 @@ RPSScissors.onclick = function () {
 
 
 socket.on('Time', function () {
-    var date = new Date().slice(4, 24);
+    var date = Date().slice(4, 24);
     timeStamp.innerHTML = date;
 });
 
