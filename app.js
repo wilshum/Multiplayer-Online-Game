@@ -51,11 +51,13 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('disconnect', function () {
-        if (socketList[socket.id] != null || playerList[socket.id] != null) {
+        if (socketList[socket.id] != null) {
             delete socketList[socket.id];
-            delete playerList[socket.id];
             console.log(socket.id + " has disconnected");
-            toAllChat(playerList[socket.id].username + " has disconnected");
+        }
+        if (playerList[socket.id] != null) {
+            toAllChat(playerList[socket.id].username + " has disconnected.");
+            delete playerList[socket.id];
         }
     });
 });
@@ -134,22 +136,22 @@ function toAllChat(line) {
         socketList[i].emit('addToChat', line);
 }
 
-function RPSCalculate(player1Choice, player2Choice) { //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
-    if (player1Choice === player2Choice)
+function RPSCalculate(playerChoice, player2Choice) { //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
+    if (playerChoice === player2Choice)
         return 0;
-    else if (player1Choice === 'Rock') {
+    else if (playerChoice === 'Rock') {
         if (player2Choice === 'Scissors')
             return 1;
         else if (player2Choice === 'Paper')
             return 2;
     }
-    else if (player1Choice === 'Paper') {
+    else if (playerChoice === 'Paper') {
         if (player2Choice === 'Rock')
             return 1
         else if (player2Choice === 'Scissors')
             return 2;
     }
-    else if (player1Choice === 'Scissors') {
+    else if (playerChoice === 'Scissors') {
         if (player2Choice === 'Paper')
             return 1
         else if (player2Choice === 'Rock')
@@ -181,41 +183,40 @@ function onConnect(socket, name, adminPower) {
     });
 
     socket.on('sendCommandToServer', function (data) {
-        var playerName = ("" + player.username);
-
+        var playerName = player.username.toString();
 ///////////////////////RPS Challenge   ->Challenger must go first ->fix error ->should refactor
         if (data.startsWith('rps')) {
-            var line = data.split(" ");
-            var player1 = player;
+            var arguments = data.split(" ");
+            var opponentName = arguments[1];
             var player2;
             for (var i in playerList) {
-                playerChallenged = playerList[i];
-                if (playerChallenged.username === line[1]) {
+                var playerChallenged = playerList[i];
+                if (playerChallenged.username === opponentName) {
                     player2 = playerChallenged;
                     var socket = socketList[player2.id];
-                    socket.emit('rpsChallenge', player1.username);
+                    socket.emit('rpsChallenge', player.username);
 
                     socket.on('rpsAccept', function () {
-                        toAllChat('RockPaperScissors between ' + player1.username + ' and ' + player2.username);
+                        toAllChat('RockPaperScissors between ' + player.username + ' and ' + player2.username);
 
-                        var socket1 = socketList[player1.id];
+                        var socket1 = socketList[player.id];
                         var socket2 = socketList[player2.id];
 
                         socket1.emit('RPSGame');
                         socket2.emit('RPSGame');
 
-                        var player1Choice = '';
+                        var playerChoice = '';
                         var player2Choice = '';
 
                         socket1.on('RPSResult', function (data) {
                             //console.log(data);
-                            player1Choice = data;
+                            playerChoice = data;
 
                             socket2.on('RPSResult', function (data) {
                                 //console.log(data);
                                 player2Choice = data;
 
-                                var result = RPSCalculate(player1Choice, player2Choice);
+                                var result = RPSCalculate(playerChoice, player2Choice);
                                 var line = "";
 
                                 switch (result) {
@@ -223,10 +224,10 @@ function onConnect(socket, name, adminPower) {
                                         line = 'Draw';
                                         break;
                                     case 1:
-                                        line = player1.username + ' beats ' + player2.username;
+                                        line = player.username + ' beats ' + player2.username;
                                         break;
                                     case 2:
-                                        line = player2.username + ' beats ' + player1.username;
+                                        line = player2.username + ' beats ' + player.username;
                                         break;
                                     default:
                                         line = 'Something went wrong!'
