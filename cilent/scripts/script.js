@@ -22,7 +22,6 @@ var RPSRock = document.getElementById('RPSRock');
 var RPSPaper = document.getElementById('RPSPaper');
 var RPSScissors = document.getElementById('RPSScissors');
 
-//Images
 var charImg = new Image();
 charImg.src = '/cilent/sprites/Tyler1.png';
 var imgFrameIndex = 50;
@@ -31,11 +30,11 @@ var imgHeight = 60;
 
 
 signDivSignIn.onclick = function () {
-    socket.emit('signIn', {user: signDivUser.value.trim(), pass: signDivPass.value.trim()});
+    socket.emit('signIn', {username: signDivUser.value.trim(), password: signDivPass.value.trim()});
 };
 
 signDivSignUp.onclick = function () {
-    socket.emit('signUp', {user: signDivUser.value.trim(), pass: signDivPass.value.trim()});
+    socket.emit('signUp', {username: signDivUser.value.trim(), password: signDivPass.value.trim()});
 };
 
 kmsButton.onclick = function () {
@@ -46,14 +45,12 @@ reviveButton.onclick = function () {
     socket.emit('revive');
 };
 
-
 socket.on('signUpResponse', function (data) {
     if (data.success) {
         alert("Sign Up Successful! Log in with Your Username and Password!")
     }
     else
         alert("Sign Up unsuccessful! Name already taken!");
-
 });
 
 socket.on('signInResponse', function (data) {
@@ -63,17 +60,13 @@ socket.on('signInResponse', function (data) {
     }
     else
         alert("Sign in unsuccessful");
-
 });
-
 
 var chatText = document.getElementById('chat-text');
 var chatForm = document.getElementById('chat-form');
 var chatInput = document.getElementById('chat-input');
-
 var canvas = document.getElementById('myCanvas').getContext("2d");
 canvas.font = '15px Arial';
-
 
 socket.on('addToChat', function (data) {
     chatText.innerHTML += '<div>' + data + '</div>';
@@ -149,12 +142,10 @@ RPSScissors.onclick = function () {
 
 //RPS Challenge
 
-
 socket.on('Time', function () {
     var date = Date().slice(4, 24);
     timeStamp.innerHTML = date;
 });
-
 
 document.onkeydown = function (event) {
     if (event.keyCode === 68) //d

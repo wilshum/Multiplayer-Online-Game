@@ -45,19 +45,17 @@ io.sockets.on('connection', function (socket) {
     socket.on('signIn', function (userData) {
         isCorrectCredential(userData).then(function (res) {
             if (res)
-                onConnect(socket, userData.user, false);
+                onConnect(socket, userData.username, false);
             socket.emit('signInResponse', {success: res});
         })
     });
 
     socket.on('disconnect', function () {
-        if (playerList.length != 0) {
-            //toAllChat(playerList[socket.id].username + " has disconnected");
-        }
-        if (socket.id != null) {
+        if (socketList[socket.id] != null || playerList[socket.id] != null) {
             delete socketList[socket.id];
             delete playerList[socket.id];
             console.log(socket.id + " has disconnected");
+            toAllChat(playerList[socket.id].username + " has disconnected");
         }
     });
 });
@@ -88,7 +86,7 @@ setInterval(function () {
 function isValidNewCredential(userData) {
     return new Promise(function (callback) {
         var query = {
-            username: userData.user,
+            username: userData.username,
         };
         dbo.collection("credentials").find(query).toArray(function (err, result) {
             if (err) throw err;
@@ -105,25 +103,25 @@ function isValidNewCredential(userData) {
 function isCorrectCredential(userData) {
     return new Promise(function (callback) {
         var query = {
-            username: userData.user,
-            password: userData.pass
+            username: userData.username,
+            password: userData.password
         };
         dbo.collection("credentials").find(query).toArray(function (err, result) {
             if (err) throw err;
-            console.log("Credentials matching: " + JSON.stringify(result));
             if (result.length != 0) {
-                console.log("Matching Credential: " + result[0]);
+                console.log("Matching Credential: " + JSON.stringify(result[0]));
                 callback(true);
             }
             callback(false);
+            console.log("incorrect user or password");
         });
     });
 }
 
 function insertCredential(data) {
     var credential = {
-        username: data.user,
-        password: data.pass
+        username: data.username,
+        password: data.password
     };
     dbo.collection("credentials").insertOne(credential, function (err, res) {
         if (err) throw err;
@@ -246,15 +244,19 @@ function onConnect(socket, name, adminPower) {
             }
         }
 
-////////////////////////////
     });
+///////////////////////////
 
     socket.on('kms', function () {
-        delete playerList[socket.id];
+        if (playerList[socket.id] != null) {
+            delete playerList[socket.id];
+        }
     });
 
     socket.on('revive', function () {
-        playerList[socket.id] = player;
+        if (playerList[socket.id] == null) {
+            playerList[socket.id] = player;
+        }
     });
 
     socket.on('charUpdate', function (data) {
