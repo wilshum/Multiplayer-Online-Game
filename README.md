@@ -1,4 +1,4 @@
-Simple MMORPG game created using Node.js
+## Simple MMORPG game created using Node.js
 
 ### required tools:
 
@@ -17,13 +17,13 @@ mongo folder -> run mongod.exe
 
 
 ### run the follow commands in your working directory -> 
-``` npm install //install dependencies in node_modules ```
+``` npm install ``` install dependencies in node_modules
 
-``` node completeApp.js //run app```
+``` node completeApp.js ``` run app
 
 
 
-### gameplay commands 
+### Gameplay commands 
 ```/rps {username} ``` to challenge them to Rock Paper Scissors and earn points
 
 
