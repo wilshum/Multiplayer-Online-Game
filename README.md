@@ -1,6 +1,6 @@
 Simple MMORPG game created using Node.js
 
-required tools:
+### required tools:
 
 -git
 
@@ -11,20 +11,22 @@ required tools:
 -mongoDB
 
 
-Setting up your database - running MongoDB:
+### Setting up your database -> running MongoDB:
+
 mongo folder -> run mongod.exe
 
 
-go on folder -> 
+### run the follow commands in your working directory -> 
 ``` npm install //install dependencies in node_modules ```
 
 ``` node completeApp.js //run app```
 
 
 
-send command 
+### gameplay commands 
 ```/rps {username} ``` to challenge them to Rock Paper Scissors and earn points
 
 
-Deployed App -> Heroku App Link (v1.0.0):
+### Deployed App -> Heroku App Link (v1.0.0):
+
 https://polar-stream-42040.herokuapp.com/
