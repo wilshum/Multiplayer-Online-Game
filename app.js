@@ -55,8 +55,19 @@ io.sockets.on('connection', function (socket) {
             delete socketList[socket.id];
             console.log(socket.id + " has disconnected");
         }
-        if (playerList[socket.id] != null) {
-            toAllChat(playerList[socket.id].username + " has disconnected.");
+        var player = playerList[socket.id];
+        if (player != null) {
+            toAllChat(player.username + " has disconnected.");
+
+            var query = {
+                username: player.username
+            };
+            var newValues = {$set: {points: player.points}};
+            dbo.collection(MONGO_REPO).updateOne(query, newValues, function (err, res) {
+                if (err) throw err;
+                console.log("MongoDB Document Updated: " + res.result);
+            });
+
             delete playerList[socket.id];
         }
     });
@@ -93,11 +104,13 @@ function isValidNewCredential(userData) {
         dbo.collection(MONGO_REPO).find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
-                console.log("user credential not taken yet: " + userData);
+                console.log("user credential not taken yet: " + JSON.stringify(userData));
                 callback(true);
             }
-            callback(false);
-            console.log("User credential already exist: " + JSON.stringify(result));
+            else {
+                callback(false);
+                console.log("User credential already exist: " + JSON.stringify(result));
+            }
         });
     });
 }
@@ -166,6 +179,8 @@ function onConnect(socket, name, points) {
 
     var player = Player(socket.id, name, points);
     playerList[socket.id] = player;
+    player.addPoint();
+    console.log(player.points);
 
     socket.on('keyPress', function (data) {            //glitchy character movement
         if (data.inputId === 'right')
@@ -196,6 +211,7 @@ function onConnect(socket, name, points) {
                 var playerChallenged = playerList[i];
                 if (playerChallenged.username === opponentName) {
                     player2 = playerChallenged;
+
                     var socket = socketList[player2.id];
                     socket.emit('rpsChallenge', player.username);
 
@@ -228,9 +244,11 @@ function onConnect(socket, name, points) {
                                         break;
                                     case 1:
                                         line = player.username + ' beats ' + player2.username;
+                                        player.addPoint();
                                         break;
                                     case 2:
                                         line = player2.username + ' beats ' + player.username;
+                                        player2.addPoint();
                                         break;
                                     default:
                                         line = 'Something went wrong!'

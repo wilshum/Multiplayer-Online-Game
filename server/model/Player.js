@@ -30,6 +30,10 @@ var Player = function (id, name, points) {
             player.y += player.speed;
     };
 
+    player.addPoint = function () {
+        player.points++;
+    };
+
     return player;
 };
 
