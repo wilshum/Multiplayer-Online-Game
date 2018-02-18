@@ -1,13 +1,13 @@
 /**
  * Created by wilso on 2018-02-03.
  */
-var Player = function (id, name, adminPower) {
+var Player = function (id, name, points) {
     var player = {
         x: X_STARTING_POS,
         y: Y_STARTING_POS,
         id: id,
         username: name,
-        admin: adminPower,
+        points: points,
         char: 'tyler1',
 
         rightPress: false,

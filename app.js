@@ -22,7 +22,7 @@ var playerList = {};
 mongoClient.connect(url, function (err, db) {
     if (err) throw err;
     dbo = db.db("mmorpg");
-    dbo.createCollection("credentials", function (err, res) {
+    dbo.createCollection(MONGO_REPO, function (err, res) {
         if (err) throw err;
         console.log("Collection created!");
     });
@@ -44,9 +44,9 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('signIn', function (userData) {
         isCorrectCredential(userData).then(function (res) {
-            if (res)
-                onConnect(socket, userData.username, false);
-            socket.emit('signInResponse', {success: res});
+            if (res.valid)
+                onConnect(socket, userData.username, res.points);
+            socket.emit('signInResponse', {success: res.valid});
         })
     });
 
@@ -88,9 +88,9 @@ setInterval(function () {
 function isValidNewCredential(userData) {
     return new Promise(function (callback) {
         var query = {
-            username: userData.username,
+            username: userData.username
         };
-        dbo.collection("credentials").find(query).toArray(function (err, result) {
+        dbo.collection(MONGO_REPO).find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length == 0) {
                 console.log("user credential not taken yet: " + userData);
@@ -108,14 +108,16 @@ function isCorrectCredential(userData) {
             username: userData.username,
             password: userData.password
         };
-        dbo.collection("credentials").find(query).toArray(function (err, result) {
+        dbo.collection(MONGO_REPO).find(query).toArray(function (err, result) {
             if (err) throw err;
             if (result.length != 0) {
                 console.log("Matching Credential: " + JSON.stringify(result[0]));
-                callback(true);
+                callback({valid: true, points: result[0].points});
             }
-            callback(false);
-            console.log("incorrect user or password");
+            else {
+                callback({valid: false, points: null});
+                console.log("incorrect user or password");
+            }
         });
     });
 }
@@ -123,9 +125,10 @@ function isCorrectCredential(userData) {
 function insertCredential(data) {
     var credential = {
         username: data.username,
-        password: data.password
+        password: data.password,
+        points: 0
     };
-    dbo.collection("credentials").insertOne(credential, function (err, res) {
+    dbo.collection(MONGO_REPO).insertOne(credential, function (err, res) {
         if (err) throw err;
         console.log("MongoDB Document Inserted: " + JSON.stringify(credential));
     });
@@ -159,9 +162,9 @@ function RPSCalculate(playerChoice, player2Choice) { //return 1 ->Player 1 wins,
     }
 }
 
-function onConnect(socket, name, adminPower) {
+function onConnect(socket, name, points) {
 
-    var player = Player(socket.id, name, adminPower);
+    var player = Player(socket.id, name, points);
     playerList[socket.id] = player;
 
     socket.on('keyPress', function (data) {            //glitchy character movement
