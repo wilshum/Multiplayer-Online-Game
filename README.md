@@ -1,6 +1,6 @@
 ## Simple MMORPG game created using Node.js
 
-### required tools:
+### Required tools:
 
 -git
 
@@ -16,7 +16,7 @@
 mongo folder -> run mongod.exe
 
 
-### run the follow commands in your working directory -> 
+### Run the follow commands in your working directory -> 
 ``` npm install ``` install dependencies in node_modules
 
 ``` node completeApp.js ``` run app
