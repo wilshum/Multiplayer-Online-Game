@@ -212,7 +212,7 @@ function toAllChat(line) {
         socketList[i].emit('addToChat', line);
 }
 
-function RPSCalculate(player, opponent) { //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
+function RPSCalculate(player, opponent) {
 
     if (player.RPSchoice === opponent.RPSchoice)
         return null;
@@ -263,7 +263,7 @@ function onConnect(socket, name, points) {
 
     socket.on('sendCommandToServer', function (data) {
         var playerName = player.username.toString();
-///////////////////////RPS Challenge   ->Challenger must go first ->fix error ->should refactor
+
         if (data.startsWith('rps')) {
 
             var arguments = data.split(" ");
@@ -288,7 +288,7 @@ function onConnect(socket, name, points) {
                 socket1.emit('RPSGame');
                 socket2.emit('RPSGame');
 
-
+                //rps only works once.
                 socket1.on('RPSResult', function (data) {
                     //console.log(data);
                     player.RPSchoice = data;
@@ -314,7 +314,6 @@ function onConnect(socket, name, points) {
         }
 
     });
-///////////////////////////
 
     socket.on('kms', function () {
         if (playerList[socket.id] != null) {
