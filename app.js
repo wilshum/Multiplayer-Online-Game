@@ -83,6 +83,7 @@ setInterval(function () {
             x: player.x,
             y: player.y,
             username: player.username,
+            points: player.points,
             lastPosition: player.lastPosition,
             char: player.char
         });
@@ -136,14 +137,14 @@ function isCorrectCredential(userData) {
 }
 
 function insertCredential(data) {
-    var credential = {
+    var account = {
         username: data.username,
         password: data.password,
         points: 0
     };
-    dbo.collection(MONGO_REPO).insertOne(credential, function (err, res) {
+    dbo.collection(MONGO_REPO).insertOne(account, function (err, res) {
         if (err) throw err;
-        console.log("MongoDB Document Inserted: " + JSON.stringify(credential));
+        console.log("MongoDB Document Inserted: " + JSON.stringify(account));
     });
 }
 
@@ -152,26 +153,27 @@ function toAllChat(line) {
         socketList[i].emit('addToChat', line);
 }
 
-function RPSCalculate(playerChoice, player2Choice) { //return 1 ->Player 1 wins, 2-> Player 2 wins, 3-> tie
-    if (playerChoice === player2Choice)
-        return 0;
-    else if (playerChoice === 'Rock') {
-        if (player2Choice === 'Scissors')
-            return 1;
-        else if (player2Choice === 'Paper')
-            return 2;
+function RPSCalculate(player, opponent) {
+
+    if (player.RPSchoice === opponent.RPSchoice)
+        return null;
+    else if (player.RPSchoice === RPS.ROCK) {
+        if (opponent.RPSchoice === RPS.SCISSOR)
+            return player;
+        else if (opponent.RPSchoice === RPS.PAPER)
+            return opponent;
     }
-    else if (playerChoice === 'Paper') {
-        if (player2Choice === 'Rock')
-            return 1
-        else if (player2Choice === 'Scissors')
-            return 2;
+    else if (player.RPSchoice === RPS.PAPER) {
+        if (opponent.RPSchoice === RPS.ROCK)
+            return player;
+        else if (opponent.RPSchoice === RPS.SCISSOR)
+            return opponent;
     }
-    else if (playerChoice === 'Scissors') {
-        if (player2Choice === 'Paper')
-            return 1
-        else if (player2Choice === 'Rock')
-            return 2;
+    else if (player.RPSchoice === RPS.SCISSOR) {
+        if (opponent.RPSchoice === RPS.PAPER)
+            return player;
+        else if (opponent.RPSchoice === RPS.ROCK)
+            return opponent;
     }
 }
 
@@ -202,72 +204,57 @@ function onConnect(socket, name, points) {
 
     socket.on('sendCommandToServer', function (data) {
         var playerName = player.username.toString();
-///////////////////////RPS Challenge   ->Challenger must go first ->fix error ->should refactor
+
         if (data.startsWith('rps')) {
+
             var arguments = data.split(" ");
             var opponentName = arguments[1];
-            var player2;
+            var opponent;
+
             for (var i in playerList) {
-                var playerChallenged = playerList[i];
-                if (playerChallenged.username === opponentName) {
-                    player2 = playerChallenged;
-
-                    var socket = socketList[player2.id];
-                    socket.emit('rpsChallenge', player.username);
-
-                    socket.on('rpsAccept', function () {
-                        toAllChat('RockPaperScissors between ' + player.username + ' and ' + player2.username);
-
-                        var socket1 = socketList[player.id];
-                        var socket2 = socketList[player2.id];
-
-                        socket1.emit('RPSGame');
-                        socket2.emit('RPSGame');
-
-                        var playerChoice = '';
-                        var player2Choice = '';
-
-                        socket1.on('RPSResult', function (data) {
-                            //console.log(data);
-                            playerChoice = data;
-
-                            socket2.on('RPSResult', function (data) {
-                                //console.log(data);
-                                player2Choice = data;
-
-                                var result = RPSCalculate(playerChoice, player2Choice);
-                                var line = "";
-
-                                switch (result) {
-                                    case 0:
-                                        line = 'Draw';
-                                        break;
-                                    case 1:
-                                        line = player.username + ' beats ' + player2.username;
-                                        player.addPoint();
-                                        break;
-                                    case 2:
-                                        line = player2.username + ' beats ' + player.username;
-                                        player2.addPoint();
-                                        break;
-                                    default:
-                                        line = 'Something went wrong!'
-                                        break;
-                                }
-                                toAllChat(line);
-                            });
-
-                        });
-
-
-                    })
-
+                if (playerList[i].username === opponentName) {
+                    opponent = playerList[i];
                 }
             }
+
+            var socket = socketList[opponent.id];
+            socket.emit('rpsChallenge', player.username);
+
+            socket.on('rpsAccept', function () {
+                toAllChat('RockPaperScissors between ' + player.username + ' and ' + opponent.username);
+
+                var socket1 = socketList[player.id];
+                var socket2 = socketList[opponent.id];
+
+                socket1.emit('RPSGame');
+                socket2.emit('RPSGame');
+
+                //rps only works once.
+                socket1.on('RPSResult', function (data) {
+                    //console.log(data);
+                    player.RPSchoice = data;
+
+                    socket2.on('RPSResult', function (data) {
+                        //console.log(data);
+                        opponent.RPSchoice = data;
+
+                        var winner = RPSCalculate(player, opponent);
+                        if (winner != null) {
+                            toAllChat(winner.username + ' wins!');
+                            winner.addPoint();
+                        }
+                        else {
+                            toAllChat('Draw!');
+                        }
+                    });
+
+                });
+
+
+            })
         }
 
     });
-///////////////////////////
 
     socket.on('kms', function () {
         if (playerList[socket.id] != null) {

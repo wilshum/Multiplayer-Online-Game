@@ -11,3 +11,8 @@ const PLAYER_SPEED = 10;
 const STARTING_DIR = 'down';
 const MONGO_REPO = "Account";
 
+const RPS = {
+    PAPER: "Paper",
+    SCISSOR: "Scissors",
+    ROCK: "Rock"
+};

@@ -99,7 +99,7 @@ socket.on('playersInfo', function (data) {
 
     //noinspection JSAnnotator
     for (var player of data) {
-        canvas.fillText(player.username, player.x, player.y);
+        canvas.fillText(player.username + ": " + player.points, player.x, player.y);
         playerListDisplay.innerHTML += '<div>' + player.username + '</div>';
 
         drawChar(player);
