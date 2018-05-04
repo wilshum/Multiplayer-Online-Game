@@ -157,7 +157,6 @@ function onConnect(socket, name, points) {
 
     var player = Player(socket.id, name, points);
     playerList[socket.id] = player;
-    player.addPoint();
     console.log(player.points);
 
     socket.on('keyPress', function (data) {            //glitchy character movement
@@ -179,7 +178,6 @@ function onConnect(socket, name, points) {
     });
 
     socket.on('sendCommandToServer', function (data) {
-
     });
 
     socket.on('kms', function () {
