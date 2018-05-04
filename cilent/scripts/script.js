@@ -70,6 +70,7 @@ canvas.font = '15px Arial';
 
 socket.on('addToChat', function (data) {
     chatText.innerHTML += '<div>' + data + '</div>';
+    chatText.scrollTop = chatText.scrollHeight;
 });
 
 function inTextField(event) {
