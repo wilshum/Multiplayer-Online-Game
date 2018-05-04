@@ -10,17 +10,6 @@ var reviveButton = document.getElementById('revive-button');
 var timeStamp = document.getElementById('timeStamp');
 var playerListDisplay = document.getElementById('player-list');
 
-//RPS Challenge
-var RPSBox = document.getElementById('RPSChallenge');
-var RPSMessage = document.getElementById('challengeMessage');
-var RPSAccept = document.getElementById('RPSAccept');
-var RPSDecline = document.getElementById('RPSDecline');
-var RPSGame = document.getElementById('RPSGame');
-
-var RPSRock = document.getElementById('RPSRock');
-var RPSPaper = document.getElementById('RPSPaper');
-var RPSScissors = document.getElementById('RPSScissors');
-
 var charImg = new Image();
 charImg.src = '/cilent/sprites/Tyler1.png';
 var imgFrameIndex = 50;
@@ -106,50 +95,6 @@ socket.on('playersInfo', function (data) {
         drawChar(player);
     }
 });
-
-
-// RPS Challenge
-
-socket.on('rpsChallenge', function (data) {
-
-    RPSMessage.innerHTML = ('Rock Paper Scissors Challenge from ' + data);
-    RPSBox.style.display = 'inline-block';
-
-    RPSAccept.onclick = function () {
-        socket.emit('rpsAccept');
-
-        RPSBox.style.display = 'none';
-    };
-
-    RPSDecline.onclick = function () {
-        //socket.emit('rpsDecline');
-
-        RPSBox.style.display = 'none';
-    };
-
-});
-
-socket.on('RPSGame', function () {
-    RPSGame.style.display = 'inline-block';
-});
-
-
-RPSRock.onclick = function () {
-    socket.emit('RPSResult', 'Rock');
-    RPSGame.style.display = 'none';
-};
-
-RPSPaper.onclick = function () {
-    socket.emit('RPSResult', 'Paper');
-    RPSGame.style.display = 'none';
-};
-
-RPSScissors.onclick = function () {
-    socket.emit('RPSResult', 'Scissors');
-    RPSGame.style.display = 'none';
-};
-
-//RPS Challenge
 
 socket.on('Time', function () {
     var date = Date().slice(4, 24);
