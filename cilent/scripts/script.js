@@ -11,7 +11,6 @@ var timeStamp = document.getElementById('timeStamp');
 var playerListDisplay = document.getElementById('player-list');
 
 //RPS Challenge
-
 var RPSBox = document.getElementById('RPSChallenge');
 var RPSMessage = document.getElementById('challengeMessage');
 var RPSAccept = document.getElementById('RPSAccept');
@@ -30,11 +29,11 @@ var imgHeight = 60;
 
 
 signDivSignIn.onclick = function () {
-    socket.emit('signIn', {username: signDivUser.value.trim(), password: signDivPass.value.trim()});
+    socket.emit('signIn', { username: signDivUser.value.trim(), password: signDivPass.value.trim() });
 };
 
 signDivSignUp.onclick = function () {
-    socket.emit('signUp', {username: signDivUser.value.trim(), password: signDivPass.value.trim()});
+    socket.emit('signUp', { username: signDivUser.value.trim(), password: signDivPass.value.trim() });
 };
 
 kmsButton.onclick = function () {
@@ -79,7 +78,7 @@ function inTextField(event) {
         elem = elem.parentNode;
 
     return (elem.tagName == "TEXTAREA" ||
-    (elem.tagName == "INPUT" && (elem.getAttribute("type") == "text")));
+        (elem.tagName == "INPUT" && (elem.getAttribute("type") == "text")));
 }
 
 chatForm.onsubmit = function (event) {
@@ -101,7 +100,8 @@ socket.on('playersInfo', function (data) {
     //noinspection JSAnnotator
     for (var player of data) {
         canvas.fillText(player.username + ": " + player.points, player.x, player.y);
-        playerListDisplay.innerHTML += '<div>' + player.username + '</div>';
+        playerListDisplay.innerHTML += '<div>' + player.username + ': ' + player.points + '</div>';
+
 
         drawChar(player);
     }
@@ -126,7 +126,6 @@ socket.on('rpsChallenge', function (data) {
 
         RPSBox.style.display = 'none';
     };
-
 
 });
 
@@ -160,26 +159,26 @@ socket.on('Time', function () {
 document.onkeydown = function (event) {
     if (!inTextField(event)) {
         if (event.keyCode === 68) //d
-            socket.emit('keyPress', {inputId: 'right', state: true});
+            socket.emit('keyPress', { inputId: 'right', state: true });
         else if (event.keyCode === 83)  //s
-            socket.emit('keyPress', {inputId: 'down', state: true});
+            socket.emit('keyPress', { inputId: 'down', state: true });
         else if (event.keyCode === 65) //a
-            socket.emit('keyPress', {inputId: 'left', state: true});
+            socket.emit('keyPress', { inputId: 'left', state: true });
         else if (event.keyCode === 87) //w
-            socket.emit('keyPress', {inputId: 'up', state: true});
+            socket.emit('keyPress', { inputId: 'up', state: true });
     }
 };
 
 document.onkeyup = function (event) {
     if (!inTextField(event)) {
         if (event.keyCode === 68) //d
-            socket.emit('keyPress', {inputId: 'right', state: false});
+            socket.emit('keyPress', { inputId: 'right', state: false });
         else if (event.keyCode === 83)  //s
-            socket.emit('keyPress', {inputId: 'down', state: false});
+            socket.emit('keyPress', { inputId: 'down', state: false });
         else if (event.keyCode === 65) //a
-            socket.emit('keyPress', {inputId: 'left', state: false});
+            socket.emit('keyPress', { inputId: 'left', state: false });
         else if (event.keyCode === 87) //w
-            socket.emit('keyPress', {inputId: 'up', state: false});
+            socket.emit('keyPress', { inputId: 'up', state: false });
     }
 };
 
@@ -206,6 +205,6 @@ function drawChar(player) {
 
 function UpdateCharModel(name) {
     charImg.src = '/cilent/sprites/' + name + '.png';
-    socket.emit('charUpdate', {charName: name});
+    socket.emit('charUpdate', { charName: name });
 }
 
