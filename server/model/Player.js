@@ -1,5 +1,5 @@
 /**
- * Created by wilso on 2018-02-03.
+ * Created by wilson on 2018-02-03.
  */
 var Player = function (id, name, points) {
     var player = {
