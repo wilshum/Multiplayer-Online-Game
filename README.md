@@ -17,6 +17,8 @@ run mongod.exe
 ### Run the follow commands in your working directory -> 
 ``` npm install ``` install dependencies in node_modules
 
+``` grunt ``` grunt will generate the completeApp.js
+
 ``` node completeApp.js ``` run app
 
 ### Deployed App -> Heroku App Link (v1.0.0):
