@@ -8,12 +8,6 @@
 
 -nodeJS
 
--mongoDB
-
-
-### Setting up your database -> running MongoDB:
-run mongod.exe
-
 ### Run the follow commands in your working directory -> 
 ``` npm install ``` install dependencies in node_modules
 
@@ -21,6 +15,6 @@ run mongod.exe
 
 ``` node completeApp.js ``` run app
 
-### Deployed App -> Heroku App Link (v1.0.0):
+### Deployed App -> Heroku App Link:
 
-https://polar-stream-42040.herokuapp.com/
+https://mmorpg-ps-12345.herokuapp.com/
