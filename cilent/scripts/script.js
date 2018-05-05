@@ -11,7 +11,7 @@ var timeStamp = document.getElementById('timeStamp');
 var playerListDisplay = document.getElementById('player-list');
 
 var charImg = new Image();
-charImg.src = '/cilent/sprites/Tyler1.png';
+charImg.src = '/cilent/sprites/tyler1.png';
 var imgFrameIndex = 50;
 var imgWidth = 50;
 var imgHeight = 60;
@@ -158,7 +158,7 @@ function drawChar(player) {
 
 function drawBullet(bullet){
     var bulletImg = new Image();
-    bulletImg.src = '/cilent/sprites/' + 'bullet' + '.png';
+    bulletImg.src = '/cilent/sprites/bullet.png';
 
     canvas.drawImage(bulletImg, 0, 0, imgWidth, imgHeight, bullet.x, bullet.y, imgWidth, imgHeight);
 }
