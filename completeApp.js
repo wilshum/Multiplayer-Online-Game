@@ -18,7 +18,41 @@ const RPS = {
 };
 
 /**
- * Created by wilso on 2018-02-03.
+ * Created by wilson on 2018-02-03.
+ */
+var Bullet = function (playerId,posX,posY,direction) {
+    var bullet = {
+        id: Math.random(),
+        x: posX + 25,
+        y: posY + 25,
+        playerId: playerId,
+        direction: direction,
+        speed: 10,
+        timer: 0,
+        toRemove: false,
+    };
+
+    bullet.update = function(){
+        bullet.updatePosition();
+        if (bullet.timer++ > 100)
+        bullet.toRemove = true;
+    };
+
+    bullet.updatePosition = function(){
+    if (bullet.direction === 'right')
+        bullet.x += bullet.speed;
+    else if (bullet.direction === 'left')
+        bullet.x -= bullet.speed;
+    else if (bullet.direction === 'up')
+        bullet.y -= bullet.speed;
+    else if (bullet.direction === 'down')
+        bullet.y += bullet.speed;
+    };
+
+    return bullet;
+}
+/**
+ * Created by wilson on 2018-02-03.
  */
 var Player = function (id, name, points) {
     var player = {
@@ -53,6 +87,11 @@ var Player = function (id, name, points) {
         player.points++;
     };
 
+    player.shootBullet = function (){
+        var bullet = Bullet(player.id,player.x,player.y,player.lastPosition);
+        bulletList[bullet.id] = bullet;
+    };
+
     return player;
 };
 
@@ -77,6 +116,7 @@ console.log('Server Started! localhost: ' + SERVER_PORT);
 
 var socketList = {};
 var playerList = {};
+var bulletList = {};
 
 mongoClient.connect(url, function (err, db) {
     if (err) throw err;
@@ -148,9 +188,29 @@ setInterval(function () {
         });
     }
 
+    var bulletPack = [];
+
+    for (var i in bulletList) {
+
+        if (bulletList[i].toRemove === true) {
+            delete bulletList[i];
+        }
+        else{
+            var bullet = bulletList[i];
+            bullet.update();
+
+            bulletPack.push({
+                x: bullet.x,
+                y: bullet.y,
+                playerId: bullet.playerId
+            });
+        }
+    }
+    
+
     for (var i in socketList) {
         var socket = socketList[i];
-        socket.emit('playersInfo', pack);
+        socket.emit('renderInfo', pack, bulletPack);
         socket.emit('Time');
     }
 }, REFRESH_RATE);
@@ -228,15 +288,15 @@ function onConnect(socket, name, points) {
         else if (data.inputId === 'down')
             player.downPress = data.state;
 
-        player.lastPosition = data.inputId;
+        if (data.inputId === 'shoot')
+            player.shootBullet();
+        else
+            player.lastPosition = data.inputId;
     });
 
     socket.on('sendMsgToServer', function (data) {
         var playerName = ("" + player.username);
         toAllChat(playerName + ': ' + data);
-    });
-
-    socket.on('sendCommandToServer', function (data) {
     });
 
     socket.on('kms', function () {

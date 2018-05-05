@@ -81,20 +81,24 @@ chatForm.onsubmit = function (event) {
 };
 
 
-socket.on('playersInfo', function (data) {
+socket.on('renderInfo', function (playerData,bulletData) {
     canvas.clearRect(0, 0, 800, 500);
 
     playerListDisplay.innerHTML = '';
 
-    //noinspection JSAnnotator
-    for (var player of data) {
+    for (var player of playerData) {
         canvas.fillText(player.username + ": " + player.points, player.x, player.y);
         playerListDisplay.innerHTML += '<div>' + player.username + ': ' + player.points + '</div>';
 
-
         drawChar(player);
     }
+
+    for (var bullet of bulletData){
+        drawBullet(bullet);
+    }
 });
+
+
 
 socket.on('Time', function () {
     var date = Date().slice(4, 24);
@@ -111,6 +115,8 @@ document.onkeydown = function (event) {
             socket.emit('keyPress', { inputId: 'left', state: true });
         else if (event.keyCode === 87) //w
             socket.emit('keyPress', { inputId: 'up', state: true });
+        else if (event.keyCode === 32) //space
+            socket.emit('keyPress', { inputId: 'shoot', state: true });
     }
 };
 
@@ -124,6 +130,8 @@ document.onkeyup = function (event) {
             socket.emit('keyPress', { inputId: 'left', state: false });
         else if (event.keyCode === 87) //w
             socket.emit('keyPress', { inputId: 'up', state: false });
+        else if (event.keyCode === 32) //space
+            socket.emit('keyPress', { inputId: 'shoot', state: false });
     }
 };
 
@@ -146,6 +154,13 @@ function drawChar(player) {
             canvas.drawImage(playersImg, imgFrameIndex * 3, 0, imgWidth, imgHeight, player.x, player.y, imgWidth, imgHeight);
             break;
     }
+}
+
+function drawBullet(bullet){
+    var bulletImg = new Image();
+    bulletImg.src = '/cilent/sprites/' + 'bullet' + '.png';
+
+    canvas.drawImage(bulletImg, 0, 0, imgWidth, imgHeight, bullet.x, bullet.y, imgWidth, imgHeight);
 }
 
 function UpdateCharModel(name) {

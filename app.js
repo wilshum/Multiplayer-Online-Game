@@ -18,6 +18,7 @@ console.log('Server Started! localhost: ' + SERVER_PORT);
 
 var socketList = {};
 var playerList = {};
+var bulletList = {};
 
 mongoClient.connect(url, function (err, db) {
     if (err) throw err;
@@ -89,9 +90,29 @@ setInterval(function () {
         });
     }
 
+    var bulletPack = [];
+
+    for (var i in bulletList) {
+
+        if (bulletList[i].toRemove === true) {
+            delete bulletList[i];
+        }
+        else{
+            var bullet = bulletList[i];
+            bullet.update();
+
+            bulletPack.push({
+                x: bullet.x,
+                y: bullet.y,
+                playerId: bullet.playerId
+            });
+        }
+    }
+    
+
     for (var i in socketList) {
         var socket = socketList[i];
-        socket.emit('playersInfo', pack);
+        socket.emit('renderInfo', pack, bulletPack);
         socket.emit('Time');
     }
 }, REFRESH_RATE);
@@ -169,15 +190,15 @@ function onConnect(socket, name, points) {
         else if (data.inputId === 'down')
             player.downPress = data.state;
 
-        player.lastPosition = data.inputId;
+        if (data.inputId === 'shoot')
+            player.shootBullet();
+        else
+            player.lastPosition = data.inputId;
     });
 
     socket.on('sendMsgToServer', function (data) {
         var playerName = ("" + player.username);
         toAllChat(playerName + ': ' + data);
-    });
-
-    socket.on('sendCommandToServer', function (data) {
     });
 
     socket.on('kms', function () {
