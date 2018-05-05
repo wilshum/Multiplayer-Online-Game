@@ -56,3 +56,16 @@ padding: 0;
     height : 100px; 
     overflow-y: auto;
 }
+
+#character-select{
+    float: left;
+    padding: 25px;
+}
+
+#chat {
+    float:left;
+}
+
+#extrabuttons{
+    padding-left: 50px;
+}
