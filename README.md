@@ -17,4 +17,4 @@
 
 ### Deployed App -> Heroku App Link:
 
-[mmorpg Heroku app](https://mmorpg-ps-12345.herokuapp.com/)
+[Multiplayer-Online-Game](https://mmorpg-ps-12345.herokuapp.com/)
