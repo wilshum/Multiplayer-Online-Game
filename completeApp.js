@@ -198,6 +198,15 @@ setInterval(function () {
         else{
             var bullet = bulletList[i];
             bullet.update();
+            
+            for (var i in playerList) {
+                var player = playerList[i];
+                if (bullet.x > player.x && bullet.x < player.x + 50 && bullet.y > player.y && bullet.y < player.y + 60){
+                    if (player.id != bullet.playerId)
+                    playerList[bullet.playerId].addPoint();
+                }
+            }
+
 
             bulletPack.push({
                 x: bullet.x,
@@ -276,7 +285,6 @@ function onConnect(socket, name, points) {
 
     var player = Player(socket.id, name, points);
     playerList[socket.id] = player;
-    console.log(player.points);
 
     socket.on('keyPress', function (data) {            //glitchy character movement
         if (data.inputId === 'right')
@@ -288,7 +296,7 @@ function onConnect(socket, name, points) {
         else if (data.inputId === 'down')
             player.downPress = data.state;
 
-        if (data.inputId === 'shoot')
+        if (data.inputId === 'shoot' && playerList[socket.id] != null)
             player.shootBullet();
         else
             player.lastPosition = data.inputId;
