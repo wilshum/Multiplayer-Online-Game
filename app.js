@@ -3,7 +3,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {});
 var mongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+var url = "mongodb://admin:admin@ds014648.mlab.com:14648/mmorpg";
 var promise = require('promise');
 var dbo;
 
