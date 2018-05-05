@@ -24,7 +24,7 @@
     "socket.io": "^1.7.3"
   },
   "engines": {
-    "node": "4.1.x"
+    "node": "8.x.x"
   },
   "devDependencies": {
     "grunt": "^1.0.2",
