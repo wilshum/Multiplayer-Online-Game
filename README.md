@@ -4,7 +4,7 @@
 
 ## Simple MMORPG game created using Node.js
 
-This game used express as the web application framework, mongoDB as the database and also used socket.IO for real-time interactions between server and cilents. The application is deployed in Heroku which uses mongoDB hosted on mLab which is a cloud database service.
+This game used express as the web application framework, mongoDB as the database and also used socket.IO for real-time interactions between server and cilents. The application is deployed in Heroku using mongoDB database hosted on mLab, a cloud database service.
 
 The game requires the user to sign up with credentials which will be stored in the database for later use. You can earn points by throwing energy balls against other players.
 
