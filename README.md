@@ -13,9 +13,13 @@ The game requires the user to sign up with credentials which will be stored in t
 ### Tools used:
 
 -NodeJS
+
 -ExpressJS
+
 -MongoDB
+
 -socketIO
+
 -Heroku
 
 ### How to run this?
@@ -26,6 +30,6 @@ Run the following commands in your working directory:
 
 ``` grunt ``` grunt will generate the completeApp.js
 
-``` node completeApp.js ``` run app
+``` node completeApp.js ``` runs the application in localhost
 
 ![alt tag](https://user-images.githubusercontent.com/11578999/39667207-849d5200-5065-11e8-98b8-d67c2dddfb8c.png)
