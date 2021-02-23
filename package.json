@@ -22,7 +22,7 @@
     "mongodb": "^3.1.13",
     "parsejson": "0.0.3",
     "promise": "^8.0.1",
-    "socket.io": "^1.7.3"
+    "socket.io": "^2.4.0"
   },
   "engines": {
     "node": "8.x.x"
