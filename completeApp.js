@@ -101,7 +101,7 @@ var app = express();
 var server = require('http').Server(app);
 var io = require('socket.io')(server, {});
 var mongoClient = require('mongodb').MongoClient;
-var url = "mongodb://admin:admin@ds014648.mlab.com:14648/mmorpg";
+var url = "mongodb+srv://admin:password123456@cluster0.qsuxf.mongodb.net/mmorpgdb?retryWrites=true&w=majority";
 var promise = require('promise');
 var dbo;
 
@@ -118,13 +118,16 @@ var socketList = {};
 var playerList = {};
 var bulletList = {};
 
-mongoClient.connect(url, function (err, db) {
+
+mongoClient.connect(url,{ useNewUrlParser: true, useUnifiedTopology: true }, function (err, db) {
     if (err) throw err;
     dbo = db.db("mmorpg");
-    dbo.createCollection(MONGO_REPO, function (err, res) {
+
+    dbo.collection(MONGO_REPO, function (err, res) {
         if (err) throw err;
         console.log("Collection created!");
     });
+
 });
 
 io.sockets.on('connection', function (socket) {

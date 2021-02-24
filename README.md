@@ -2,7 +2,7 @@
 
 Click on the following link and start playing!
 
-[Multiplayer-Online-Game](https://mmorpg-ps-12345.herokuapp.com/)
+[Multiplayer-Online-Game](https://mmorpg-ps-123.herokuapp.com/)
 
 ## Simple MMORPG game created using Node.js
 
