@@ -8,7 +8,7 @@ Click on the following link and start playing!
 
 This game used express as the web application framework, mongoDB as the database and also used socket.IO for real-time interactions between server and cilents. The application is deployed in Heroku using mongoDB database hosted on MongoDB Atlas, a cloud database service.
 
-The game requires the user to sign up with credentials which will be stored in the database. You can earn points by throwing energy balls against other players and try to earn the highest points!
+The game requires the user to sign up with credentials which will be stored in the database. You can earn points by throwing energy balls against other players and try to attain  the highest points!
 
 ### Tools used:
 
